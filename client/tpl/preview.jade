@@ -1,0 +1,49 @@
+mixin small-preview(data)
+	.small-preview
+		.preview
+		.metadata
+			.thumb-container
+				img(src=data.thumb)
+				.video-length= data.duration
+			h5= data.title
+			.author= data.user
+			.views= data.views
+		.likebar
+			.dislikes(style="flex:"+data.dislikes)
+			.neutral(style="flex:"+data.neutral)
+			.likes(style="flex:"+data.likes)
+
+mixin list-preview(data)
+	.list-preview
+		.preview
+			.thumb
+				.thumb-container
+					img(src=data.thumb)
+					.video-length= data.duration
+				.likebar
+					.dislikes(style="flex:"+data.dislikes)
+					.neutral(style="flex:"+data.neutral)
+					.likes(style="flex:"+data.likes)
+			.metadata
+				h4= data.title
+				.author= data.user
+				.views= data.views
+				.description= data.description
+
+mixin upload-preview(data)
+	.list-preview
+		.preview
+			.thumb
+				.thumb-container
+					img(src=data.thumb)
+					.video-length= data.duration
+				.likebar
+					.dislikes(style="flex:"+data.dislikes)
+					.neutral(style="flex:"+data.neutral)
+					.likes(style="flex:"+data.likes)
+			.metadata
+				h4= data.title
+				.author= data.user
+				.views= data.views
+				.description= data.description
+				button.erase-video.glyphicon.glyphicon-erase(title="Erase the metadata (IPFS may still have the files)")
