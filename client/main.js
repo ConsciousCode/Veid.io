@@ -165,11 +165,19 @@ function favorite(btn){
 	$(btn).toggleClass("glyphicon-heart-empty glyphicon-heart");
 }
 
-function swirly_merge(swirls){
-	var total=0,dump_x=new Array(64),dump_y=new Array(64);
-	for(var i=0;i<weights.length;++i){
-		total+=weights[i];
+function subscribe(btn){
+	$(btn).toggleClass("glyphicon-star-empty glyphicon-star");
+}
+
+function Quality(){
+	var vec=new Uint8Array(64);
+	for(var i=0;i<64;++i){
+		vec[i]=Math.random()*256;
 	}
+}
+
+Quality.merge=function(swirls){
+	var dump_x=new Array(64),dump_y=new Array(64);
 	
 	for(var i=0;i<swirls.length;++i){
 		for(var d=0;d<64;++d){
@@ -186,6 +194,25 @@ function swirly_merge(swirls){
 	return vec;
 }
 
-function swirly_step(from,to,by){
+Quality.point_dist=function(a,b){
+	var d=Math.abs(a-b)%128;
 	
+	return d*d;
+}
+
+Quality.distance=function(a,b){
+	var dist=0;
+	for(var i=0;i<64;++i){
+		dist+=Quality.point_dist(a[i],b[i]);
+	}
+	
+	return dist;
+}
+
+Quality.step=function(from,to,by){
+	for(var i=0;i<64;++i){
+		from[i]+=Math.min(by,quality_point_distance(from[i],to[i]))*
+			(Math.abs(from[i]-to[i])>128?1:-1)*
+			(from[i]>to[i]?1:-1);
+	}
 }

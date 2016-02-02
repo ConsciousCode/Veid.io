@@ -33,6 +33,11 @@ body {
 	flex-direction: column;
 }
 
+h3 {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
 .glyphicon {
 	/* Ordinarily top: 1 - why the fuck even? */
 	top: 0;
@@ -171,26 +176,55 @@ input,button {
 	}
 }
 
+// Used for locking the controls to be visible even if the mouse isn't hovering
 #player.control-lock {
 	#controls {
 		opacity: 1;
 	}
 }
 
-#genre-menu {
+.cost::before {
+	content: "";
+	background: url('../money.svg');
+	background-size: 1em;
+	width: 1em;
+	height: 1em;
 	display: inline-block;
 }
 
-#genre-menu.dropdown.open {
-	background: red;
-	
-	ul::before {
-		content: "";
-		display: block;
-		background: blue;
-		width: 2em;
-		height: 5px;
+#subscribe {
+	border: none;
+	background: none;
+	padding: 0;
+	margin-left: 6px;
+}
+
+#genre-menu.open {
+	#add-genre {
+		padding: 4px 4px 12px 4px;
+		margin: -1px;
+		z-index: 9999;
+		background: @player-fg;
+		border: 1px solid #AAA;
+		border-bottom: 1px solid @player-fg;
+		border-radius: @rounding*2 @rounding*2 0 2px;
 	}
+	
+	#add-genre.open {
+		padding: 2px 2px 12px 2px;
+	}
+	
+	.dropdown-menu {
+		margin-top: 0;
+		border-top-left-radius: 0;
+		border-color: #AAA;
+		margin-left: -1px;
+		padding: 3px;
+	}
+}
+
+#genre-menu {
+	display: inline-block;
 }
 
 #preferences {
@@ -216,8 +250,17 @@ input,button {
 }
 
 #info {
-	padding: 8px;
+	padding: 8px 2% 4px 2%;
 	display: block;
+	
+	#predd {
+		display: flex;
+		justify-content: space-between;
+		
+		#creator-info {
+			font-size: 14pt;
+		}
+	}
 }
 
 #interact {
@@ -228,8 +271,7 @@ input,button {
 	}
 	
 	button {
-		padding: 0;
-		margin: 3px;
+		padding: @rounding*2;
 		background: none;
 		border: none;
 		outline: none;
@@ -528,5 +570,31 @@ input,button {
 		background: @button-bg;
 		border: 1px solid @main-border;
 		border-radius: @rounding;
+	}
+}
+
+#video-info-panel {
+	code {
+		font-family: Courier New;
+		font-size: 10pt;
+		border: 1px solid @main-border;
+		border-radius: 4px;
+		background: ghostwhite;
+		
+		padding: 3px;
+		
+		color: #c7254e;
+	}
+	/*
+	.views {
+		display: inline-block;
+	}
+	*/
+	.views::after {
+		content: " views";
+	}
+	
+	time {
+		display: inline-block;
 	}
 }

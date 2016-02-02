@@ -1,10 +1,10 @@
 Requirements:
 =============
-node
-node-mysql
-    npm install mysql
+* node
+* node-mysql
 
-    https://github.com/felixge/node-mysql
+
+    npm install mysql
 
 Running:
 ========

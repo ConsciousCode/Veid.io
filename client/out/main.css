@@ -1,0 +1,470 @@
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+body {
+  background: #c5ccd7;
+  color: #2B333F;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+h3 {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.glyphicon {
+  /* Ordinarily top: 1 - why the fuck even? */
+  top: 0;
+}
+.left {
+  float: left;
+  display: inline-block;
+}
+.right {
+  float: right;
+  display: inline-block;
+}
+.clearfix::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+input,
+button {
+  outline: none;
+}
+#player:hover #controls {
+  opacity: 1;
+}
+#player {
+  display: table;
+  position: relative;
+  margin: 2% auto 0 auto;
+  max-width: 96%;
+}
+#player video {
+  max-width: 100%;
+}
+#player #controls {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  cursor: default;
+  opacity: 0;
+  transition: opacity 0.15s;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  background: rgba(43, 51, 63, 0.7);
+  background: linear-gradient(rgba(43, 51, 63, 0.2), rgba(43, 51, 63, 0.8));
+  color: #fff;
+  font-size: 16pt;
+}
+#player #controls #timebar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #161a21;
+  padding: 0;
+  margin-bottom: 5px;
+}
+#player #controls #timebar #watched {
+  background: blue;
+  background: linear-gradient(to top, #000099, blue 50%, #6666ff);
+  height: 3px;
+  width: 0;
+}
+#player #controls #timebar::-webkit-progress-value {
+  background: blue;
+  background: linear-gradient(to top, #0000cc, blue 50%, #3333ff);
+}
+#player #controls #timebar::-webkit-progress-bar {
+  background: #020202;
+  background: linear-gradient(to top, #404c5d, #2B333F, #161a21);
+}
+#player #controls button {
+  background: none;
+  border: none;
+  padding: 0;
+}
+#player #controls .left button {
+  margin: 0 0 0 5px;
+}
+#player #controls .left .time {
+  margin-left: 5px;
+}
+#player #controls .left .time #watched-time {
+  padding: 2px;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+#player #controls .left .time #duration-time {
+  padding: 2px;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+#player #controls .left #rewind {
+  margin: 0;
+}
+#player #controls .left #next {
+  margin: 0;
+}
+#player #controls .right button {
+  margin: 0 5px 0 0;
+}
+#player #controls #volume {
+  width: 2em;
+  height: 1em;
+  display: inline-block;
+}
+#player #controls::after {
+  clear: both;
+}
+#player.control-lock #controls {
+  opacity: 1;
+}
+.cost::before {
+  content: "";
+  background: url('../money.svg');
+  background-size: 1em;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+}
+#subscribe {
+  border: none;
+  background: none;
+  padding: 0;
+  margin-left: 6px;
+}
+#genre-menu.open #add-genre {
+  padding: 4px 4px 12px 4px;
+  margin: -1px;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid #AAA;
+  border-bottom: 1px solid #fff;
+  border-radius: 4px 4px 0 2px;
+}
+#genre-menu.open #add-genre.open {
+  padding: 2px 2px 12px 2px;
+}
+#genre-menu.open .dropdown-menu {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-color: #AAA;
+  margin-left: -1px;
+  padding: 3px;
+}
+#genre-menu {
+  display: inline-block;
+}
+#preferences {
+  display: inline-block;
+}
+.likebar {
+  display: flex;
+  width: 100%;
+  height: 5px;
+}
+.likebar .dislikes {
+  background: red;
+}
+.likebar .neutral {
+  background: yellow;
+}
+.likebar .likes {
+  background: green;
+}
+#info {
+  padding: 8px 2% 4px 2%;
+  display: block;
+}
+#info #predd {
+  display: flex;
+  justify-content: space-between;
+}
+#info #predd #creator-info {
+  font-size: 14pt;
+}
+#interact {
+  font-size: 18pt;
+}
+#interact #likes {
+  display: inline-table;
+}
+#interact button {
+  padding: 4px;
+  background: none;
+  border: none;
+  outline: none;
+}
+#interact #likebar {
+  width: 100%;
+  height: 4px;
+  background: yellow;
+}
+.tabs {
+  display: block;
+}
+.tabs ul {
+  list-style-type: none;
+  display: flex;
+  margin: 0 0 -1px 0;
+  padding: 0 12px 0 12px;
+  font-size: 14pt;
+}
+.tabs ul li {
+  padding: 6px;
+}
+.tabs ul li button {
+  width: 2em;
+  height: 2em;
+  background: #cfcfff;
+  border: 1px solid #404c5d;
+  border-radius: 2px;
+}
+.tabs ul li.active {
+  background: #e3e7ec;
+  border: 1px solid #404c5d;
+  border-bottom: 1px solid #e3e7ec;
+  border-radius: 6px 6px 0 0;
+  padding: 5px;
+  padding-bottom: 6px;
+}
+#search {
+  display: flex;
+  flex-grow: 1;
+}
+#search input {
+  flex-grow: 1;
+  height: 2em;
+  background: white;
+  border: 1px solid #404c5d;
+  border-radius: 2px 0 0 2px;
+  padding: 0.5em;
+}
+#search button {
+  border-radius: 0 2px 2px 0;
+  border-left: none;
+}
+#omnipanel {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #e3e7ec;
+  border-top: 1px solid #404c5d;
+  flex: 1;
+  z-index: -99;
+}
+#omnipanel #search-panel button {
+  width: 2em;
+  height: 2em;
+  font-size: 11pt;
+  margin-left: 8px;
+  background: #cfcfff;
+  border: 1px solid #404c5d;
+  border-radius: 2px;
+}
+#omnipanel section {
+  display: none;
+  padding: 12px;
+}
+#omnipanel section.active {
+  display: block;
+}
+#omnipanel::after {
+  content: "";
+  height: 12px;
+  display: block;
+}
+.preview {
+  display: flex;
+  width: 100%;
+}
+.small-preview {
+  width: 256px;
+  height: 256px;
+  display: flex;
+  flex-direction: column;
+  background: #c5ccd7;
+  border: 1px solid #404c5d;
+  border-radius: 4px;
+}
+.small-preview .metadata {
+  padding: 3px;
+  flex: 1;
+}
+.small-preview .thumb-container {
+  position: relative;
+}
+.small-preview img {
+  width: 100%;
+  border: 1px solid #404c5d;
+}
+.small-preview .video-length {
+  background: rgba(43, 51, 63, 0.5);
+  position: absolute;
+  padding: 2px;
+  color: #fff;
+  left: 0;
+  bottom: 0;
+  border-top-right-radius: 4px;
+  font-size: 9pt;
+}
+.small-preview h5 {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+.small-preview .author {
+  display: inline-block;
+}
+.small-preview .author::before {
+  content: "By: ";
+}
+.small-preview .views {
+  display: inline-block;
+  float: right;
+}
+.small-preview .views::after {
+  content: " views";
+}
+.small-preview .likebar {
+  border-top: 1px solid #404c5d;
+  border-radius: 0 0 4px 4px;
+}
+.list-preview {
+  display: flex;
+  width: 100%;
+  padding: 3px;
+  background: #c5ccd7;
+  border: 1px solid #404c5d;
+  border-radius: 4px;
+}
+.list-preview .thumb {
+  width: 248px;
+}
+.list-preview .metadata {
+  padding: 3px;
+  flex: 1;
+}
+.list-preview .thumb-container {
+  position: relative;
+}
+.list-preview img {
+  width: 100%;
+  border: 1px solid #404c5d;
+}
+.list-preview .video-length {
+  background: rgba(43, 51, 63, 0.5);
+  position: absolute;
+  padding: 2px;
+  color: #fff;
+  left: 0;
+  bottom: 0;
+  border-top-right-radius: 4px;
+  font-size: 9pt;
+}
+.list-preview h4 {
+  margin: 0;
+  font-weight: 600;
+}
+.list-preview .author {
+  display: inline-block;
+}
+.list-preview .author::before {
+  content: "By: ";
+}
+.list-preview .views {
+  display: inline-block;
+  float: right;
+}
+.list-preview .views::after {
+  content: " views";
+}
+.list-preview .likebar {
+  border: 1px solid #404c5d;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+#comment-panel #new-comment {
+  display: flex;
+  justify-content: space-around;
+}
+#comment-panel #new-comment textarea {
+  resize: none;
+  width: 90%;
+  height: 5em;
+  flex: 1;
+  border: 1px solid #404c5d;
+  border-radius: 2px;
+}
+#comment-panel #new-comment #upload-comment {
+  width: 2em;
+  height: 2em;
+  background: #cfcfff;
+  border: 1px solid #404c5d;
+  border-radius: 2px;
+  margin-left: 12px;
+}
+#cloud-panel #new-video {
+  width: 2em;
+  height: 2em;
+  float: right;
+  margin-bottom: 12px;
+  background: #cfcfff;
+  border: 1px solid #404c5d;
+  border-radius: 2px;
+}
+#cloud-panel .metadata {
+  position: relative;
+}
+#cloud-panel .erase-video {
+  width: 2em;
+  height: 2em;
+  top: auto;
+  /* Bootstrap sets top: 0 */
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  background: #cfcfff;
+  border: 1px solid #404c5d;
+  border-radius: 2px;
+}
+#video-info-panel {
+  /*
+	.views {
+		display: inline-block;
+	}
+	*/
+}
+#video-info-panel code {
+  font-family: Courier New;
+  font-size: 10pt;
+  border: 1px solid #404c5d;
+  border-radius: 4px;
+  background: ghostwhite;
+  padding: 3px;
+  color: #c7254e;
+}
+#video-info-panel .views::after {
+  content: " views";
+}
+#video-info-panel time {
+  display: inline-block;
+}
