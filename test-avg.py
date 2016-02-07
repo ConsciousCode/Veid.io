@@ -3,12 +3,16 @@
 import random
 import numpy as np
 
-epochs=1000
-entropy=32
+epochs=10000
+entropy=256
 
-tags=["anime","letsplay","funny","prank","review","edu","reaction"]
+tags=range(32)
 
-print "Max distance:",len(tags)*(entropy/2)**2
+maxd=len(tags)*(entropy/2)**2
+
+print "Max distance:",maxd
+print len(tags),"objective features"
+print entropy,"entropy"
 
 #Used for both users and videos for laziness
 class User:
@@ -41,8 +45,11 @@ def format_likes(x):
 	for key,val in x.iteritems():
 		print key+(":%d"%val),
 
-users=[User() for j in xrange(100)]
+users=[User() for j in xrange(300)]
 videos=[User() for j in xrange(2000)]
+
+print len(users),"users"
+print len(videos),"videos"
 
 def test_accuracy():
 	merr=0
@@ -53,7 +60,7 @@ def test_accuracy():
 		sv=np.repeat(None,11)
 		
 		for vid in videos:
-			err=abs(2*dist(user.prefs,vid.prefs)/float(entropy*len(tags))-calc_vote(user,vid))
+			err=abs(dist(user.prefs,vid.prefs)/(float(entropy*len(tags))/2)-calc_vote(user,vid))
 			
 			if err>merr:
 				merr=err
@@ -81,3 +88,21 @@ for epoch in xrange(epochs):
 			user.prefs=(up-order*d)%entropy
 
 print "Error after {} epochs:".format(epochs),test_accuracy()
+
+md=np.inf
+Md=-np.inf
+ds=0
+s=0
+
+for v in xrange(len(videos)):
+	for u in xrange(len(videos)-v-1):
+		d=dist(videos[v].prefs,videos[u].prefs)
+		if d>Md:
+			Md=d
+		elif d<md:
+			md=d
+		
+		ds+=d
+		s+=1
+
+print "Video distances",md,":",ds/s,":",Md

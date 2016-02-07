@@ -4,6 +4,7 @@ include preview
 doctype html
 html
 	head
+		meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
 		title Veido
 		link(rel="stylesheet" href=inc+"css/bootstrap.min.css")
 		link(rel="stylesheet" href="main.css")
@@ -14,39 +15,36 @@ html
 		section#player
 			noscript
 				h3 This website requires JavaScript to be enabled. This is unavoidable until the technologies become more mature.
-			video(controls=false preload="metadata" onclick="player.pauseplay()")
+			video(controls=false preload="metadata")
 				source(src="http://vjs.zencdn.net/v/oceans.mp4" type='video/mp4')
 				source(src="http://vjs.zencdn.net/v/oceans.webm" type="video/webm")
-			#controls
-				progress#timebar(onclick="player.htmlSeek(event,this)")
-					#progress
-				.left
-					span.time #[span#watched-time] / #[span#duration-time]
-					button#play.glyphicon.glyphicon-play(onclick="player.pauseplay()")
-				.right
-					button#mute.glyphicon.glyphicon-volume-up(onclick="player.mute()")
-					button#volume
-						svg(width="2em" height="1em" viewBox="0 0 2.05 1.05" onclick="player.volume(this,event,true)" onmousemove="player.volume(this,event)")
-							defs
-								linearGradient#color
-									stop(offset="0%" style="stop-color:black")
-									stop(offset="100%" style="stop-color:blue")
-								linearGradient#desat
-									stop(offset="0%" style="stop-color:black")
-									stop(offset="100%" style="stop-color:	#666699")
-							path#volume-fill(d="M 0,1 L 2,1 L 2,0 z" fill="url(#color)")
-							path(d="M 0,1 L 2,1 L 2,0 z" stroke="grey" stroke-width="0.05px" fill="none")
-					button#fullscreen.glyphicon.glyphicon-fullscreen(onclick="player.fullscreen()")
+			#controls.no-select
+				#timebar
+					progress(max=1)
+						#progress
+					#seektime
+				#control-buttons.flex-between
+					.flex-around
+						#time-text.flex-around
+							#watched-time
+							div / 
+							#duration-time
+						button#play.glyphicon.glyphicon-play
+					.flex-around
+						button#mute.glyphicon.glyphicon-volume-up
+						button#volume
+							canvas(width=36 height=18)
+						button#fullscreen.glyphicon.glyphicon-fullscreen
 		section#info
 			h3#title Sample Title
 			#predd
 				#creator-info
 					#creator-avatar
 					span#creator-name Sample Name
-					button#subscribe.glyphicon.glyphicon-star-empty(onclick="subscribe(this)")
+					button#subscribe.interact-button.glyphicon.glyphicon-star-empty
 				#interact
 					.dropdown#genre-menu
-						button.glyphicon.glyphicon-tag#add-genre(data-toggle="dropdown" aria-haspopup=true aria-expanded=true)
+						button.interact-button.glyphicon.glyphicon-tag#add-genre(data-toggle="dropdown" aria-haspopup=true aria-expanded=true)
 							span.caret
 						ul.dropdown-menu(aria-labelledby="add-genre")
 							li A
@@ -56,47 +54,56 @@ html
 							li.divider(role="separator")
 							li Separate
 					#preferences
-						button#dislike.glyphicon.glyphicon-minus(title="Less of this" onclick="dislike(this)")
-						button#like.glyphicon.glyphicon-plus(title="More of this" onclick="like(this)")
-						button#favorite.glyphicon.glyphicon-heart-empty(title="Favorite" onclick="favorite(this)")
-						button#love.glyphicon.glyphicon-gift(title="Tip the creator" onclick="tip()")
-						#likebar
-		br.clearfix
+						button#dislike.interact-button.glyphicon.glyphicon-minus(title="Less of this")
+						button#like.interact-button.glyphicon.glyphicon-plus(title="More of this")
+						button#favorite.interact-button.glyphicon.glyphicon-heart-empty(title="Favorite")
+						button#love.interact-button.glyphicon.glyphicon-gift(title="Tip the creator")
+						.likebar
+							.dislikes(style="flex:1")
+							.neutral(style="flex:2")
+							.likes(style="flex:3")
 		section.tabs
 			ul
 				li#search.active
 					input(type="text" title="Search" autocomplete="off" spellcheck="off")
-					button.glyphicon.glyphicon-search(title="Search")
+					button.option-button.glyphicon.glyphicon-search(title="Search")
 				li#video-info
-					button.glyphicon.glyphicon-question-sign(title="Dooblydoo")
+					button.option-button.glyphicon.glyphicon-question-sign(title="Dooblydoo")
 				li#comment
-					button.glyphicon.glyphicon-comment(title="Comments")
+					button.option-button.glyphicon.glyphicon-comment(title="Comments")
 				li#flag
-					button#flag.glyphicon.glyphicon-flag(title="Report an issue")
+					button.option-button.glyphicon.glyphicon-flag(title="Report an issue")
 				li#profile
-					button.glyphicon.glyphicon-user(title="Profile")
+					button.option-button.glyphicon.glyphicon-user(title="Profile")
 				li#cloud
-					button.glyphicon.glyphicon-cloud(title="Manage uploads")
+					button.option-button.glyphicon.glyphicon-cloud(title="Manage uploads")
 				li#config
-					button.glyphicon.glyphicon-cog(title="Settings")
+					button.option-button.glyphicon.glyphicon-cog(title="Settings")
 				li#site-info
-					button.glyphicon.glyphicon-certificate(title="About")
+					button.option-button.glyphicon.glyphicon-certificate(title="About")
 		#omnipanel
 			section#search-panel.active
+				.left
+					button#search-current.option-button.glyphicon.glyphicon-eject(title="Similar to the current video")
+					button#search-mine.option-button.glyphicon.glyphicon-pushpin(title="Stuff you'll like")
+					button#search-trending.option-button.glyphicon.glyphicon-tree-deciduous(title="Average trends of what people like")
+					button#search-hot.option-button.glyphicon.glyphicon-fire(title="What's popular right now")
+					button#search-liked.option-button.glyphicon.glyphicon-apple(title="Well-favored videos")
+					button#search-random.option-button.glyphicon.glyphicon-flash(title="Random")
 				.right
-					button.glyphicon.glyphicon-th
-					button.glyphicon.glyphicon-th-list
-				br.clearfix
+					button#search-grid.option-button.glyphicon.glyphicon-th(title="Grid")
+					button#search-list.option-button.glyphicon.glyphicon-th-list(title="List")
+				.clearfix
 				+small-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000})
 				br
 				+list-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
-				br.clearfix
+				.clearfix
 			section#video-info-panel
 				code.preference hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]
 				.views 10,000
 				time.published Nov 25, 2015
 				.cost 10
-				.description This is a simple description for a video about dolphins or something. Why are cats related? Who knows. These descriptions will be rendered markdown loaded from IPFS.
+				p This is a simple description for a video about dolphins or something. Why are cats related? Who knows. These descriptions will be rendered markdown loaded from IPFS.
 				.tags #dolphins #fish #first #public-domain
 				.license Creative Commons
 			section#comment-panel
@@ -105,7 +112,81 @@ html
 					.right
 						button#upload-comment.glyphicon.glyphicon-send(title="Post comment")
 			section#flag-panel
+				p
+					button#get-flag Review a flag
+					span#get-flag-time 00
+					p #[span.cost 1] -> #[span.cost 3]
+				#flag-types
+					input(type="radio" name="issue" value="sexual")
+					| Sexual content
+					.more-info.glyphicon.glyphicon-question-sign(title="Pornography and objectionable nudity in general")
+					br
+					input(type="radio" name="issue" value="child-abuse")
+					| Child abuse
+					.more-info.glyphicon.glyphicon-question-sign(title="Sexual, predatory, physical, or emotional abuse of children")
+					br
+					input(type="radio" name="issue" value="violent")
+					| Violence
+					.more-info.glyphicon.glyphicon-question-sign(title="Displays of excessive violence with no greater merit")
+					br
+					input(type="radio" name="issue" value="hateful")
+					| Hate speech
+					.more-info.glyphicon.glyphicon-question-sign(title="Provocations of hatred toward individuals or groups (not criticism)")
+					br
+					input(type="radio" name="issue" value="dangerous")
+					| Dangerous content
+					.more-info.glyphicon.glyphicon-question-sign(title="Content which encourages viewers to participate in dangerous activities")
+					br
+					input(type="radio" name="issue" value="copyright")
+					| Copyright
+					.more-info.glyphicon.glyphicon-question-sign(title="Misuse of copyrighted material")
+				p#flag-fromto #[span.cost#flag-from 1] -> #[span.cost#flag-to 3]
+				p
+					input#use-timestamp(type="checkbox")
+					| Include current timestamp
+				p#evidence-bag
+					label(for="evidence") Evidence: 
+					textarea#evidence
+				p#no-evidence Providing an explanation for your flag helps reviewers to decide if it's correct more quickly.
+				button#submit-flag Submit
 			section#profile-panel
+				table
+					tbody
+						tr
+							td Username
+							td
+								input#set-username
+								.more-info.glyphicon.glyphicon-question-sign(title="You don't need a username, but having one lets you log in when you clear your browser history")
+						tr
+							td Password
+							td
+								input(type="password")#set-password
+								.more-info.glyphicon.glyphicon-question-sign(title="To set your username, you need a password too")
+						tr
+							td
+							td
+								input(type="password")#confim-password
+				table
+					tbody
+						tr
+							td
+								img#avatar-preview
+							td
+								input(placeholder="IPFS hash of avatar")
+				h4 User preferences
+				input(value="hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]")
+				span#name-as.glyphicon.glyphicon-arrow-right
+				input(placeholder="Name for this preference")
+				button#new-pref.glyphicon.glyphicon-plus
+				table
+					tbody
+						tr
+							td Anime
+							td
+								input(disabled value="hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]")
+				h4 Favorites
+				+list-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
+				.clearfix
 			section#cloud-panel
 				button#new-video.glyphicon.glyphicon-cloud-upload
 				+upload-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
@@ -131,6 +212,7 @@ html
 					li: a(href="#faq-8") How are videos recommended?
 					li: a(href="#faq-9") What about copyrighted material?
 					li: a(href="#faq-10") Can I advertise?
+				h3 FAQ
 				h4#faq-1 What is this?
 				p Veid.io is a distributed, crowdsourced video distribution platform using brand new technologies to support a better experience for everyone involved. To put it simply, we're not run by robots; we're run by #[em you]. We're a collaborative effort of all those involved, from the storage to the recommendation engine.
 				h4#faq-2 How does it work?

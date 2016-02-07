@@ -1,21 +1,20 @@
-@player-fg: #fff;
 @player-bg: #2B333F;
 @main-bg: lighten(@player-bg,60%);
 @main-fg: lighten(@player-bg,70%);
 @main-border: lighten(@player-bg,10%);
 @button-bg: darken(ghostwhite,8%);
 @player-margin: 2%;
+@player-fg: @main-bg;
 
 @rounding: 2px;
-@controls-offset: 5px;
 
-@no-select: {
+.no-select {
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-};
+}
 
 html {
 	margin: 0;
@@ -38,11 +37,6 @@ h3 {
 	margin-bottom: 10px;
 }
 
-.glyphicon {
-	/* Ordinarily top: 1 - why the fuck even? */
-	top: 0;
-}
-
 .left {
 	float: left;
 	display: inline-block;
@@ -53,10 +47,9 @@ h3 {
 	display: inline-block;
 }
 
-.clearfix::after {
+.clearfix {
 	clear: both;
-	content: "";
-	display: block;
+	margin: 12px;
 }
 
 input,button {
@@ -69,6 +62,17 @@ input,button {
 	}
 }
 
+.flex-between {
+	display: flex;
+	justify-content: space-between;
+}
+
+.flex-around {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
 #player {
 	display: table;
 	position: relative;
@@ -78,48 +82,107 @@ input,button {
 	
 	video {
 		max-width: 100%;
+		display: block;
 	}
 	
 	#controls {
-		@no-select();
 		cursor: default;
 		
 		opacity: 0;
 		transition: opacity 0.15s;
 		
 		position: absolute;
-		bottom: @controls-offset;
+		bottom: 0;
 		left: 0;
 		right: 0;
 		background: fadeout(@player-bg,30%);
 		background: linear-gradient(fadeout(@player-bg,80%),fadeout(@player-bg,20%));
 		color: @player-fg;
-		font-size: 16pt;
+		font-size: 14pt;
 		
 		#timebar {
 			display: block;
 			width: 100%;
-			height: 3px;
-			background: darken(@player-bg,10%);
-			padding: 0;
-			margin-bottom: @controls-offset;
+			height: 18px;
+			top: -5px;
+			position: absolute;
+			padding: 6px 0 1px 0;
+			cursor: pointer;
 			
-			#watched {
+			progress {
+				width: 100%;
+				height: 3px;
+				background: darken(@player-bg,10%);
+				display: block;
+			}
+			
+			#seektime {
+				display: none;
+			}
+			
+			#progress {
 				background: blue;
 				background: linear-gradient(to top,darken(blue,20%),blue 50%,lighten(blue,20%));
 				height:3px;
-				width:0;
+				width:100%;
 			}
 		}
 		
-		#timebar::-webkit-progress-value {
-			background: blue;
-			background: linear-gradient(to top,darken(blue,10%),blue 50%,lighten(blue,10%));
+		#timebar:hover {
+			top: -6px;
+			
+			progress {
+				height: 5px;
+			}
+			
+			#seektime {
+				position: absolute;
+				display: block;
+				background: fadeout(@player-bg,30%);
+				bottom: 12px;
+				font-size: 9pt;
+				padding: 2px;
+				border-radius: @rounding @rounding 0 0;
+			}
+			
+			#progress {
+				height: 5px;
+			}
 		}
 		
-		#timebar::-webkit-progress-bar {
+		#timebar progress::-webkit-progress-bar {
 			background: darken(@player-bg,20%);
-			background: linear-gradient(to top,lighten(@player-bg,10%),@player-bg,darken(@player-bg,10%));
+			background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
+		}
+		
+		#timebar progress::-webkit-progress-value {
+			background: blue;
+			background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
+			position: relative;
+		}
+		
+		#timebar:hover progress[value]::-webkit-progress-value::after {
+			content: '';
+			animation-duration: 0.5s;
+			animation-iteration-count: 1;
+			animation-name: marker-in;
+			position: absolute;
+			border-radius: 100%;
+			right: -2px;
+			top: -2px;
+			background-color: white;
+		}
+		
+		@keyframes marker-in {
+			from {
+				width: 1px;
+				height: 1px;
+			}
+			
+			to {
+				width: 9px;
+				height: 9px;
+			}
 		}
 		
 		button {
@@ -128,46 +191,32 @@ input,button {
 			padding: 0;
 		}
 		
-		.left {
-			button {
-				margin: 0 0 0 @controls-offset;
+		#control-buttons {
+			padding: 6px 4px 3px 2px;
+		}
+		
+		#time-text {
+			font-size: 10pt;
+			margin-bottom: -3px;
+			
+			#watched-time {
+				padding: 2px;
+				cursor: default;
 			}
 			
-			.time {
-				margin-left: @controls-offset;
-				
-				#watched-time {
-					padding: 2px;
-					@no-select();
-					cursor: default;
-				}
-				
-				#duration-time {
-					padding: 2px;
-					@no-select();
-					cursor: default;
-				}
-			}
-			
-			#rewind {
-				margin: 0;
-			}
-			
-			#next {
-				margin: 0;
+			#duration-time {
+				padding: 2px;
+				cursor: default;
 			}
 		}
 		
-		.right {
-			button {
-				margin: 0 @controls-offset 0 0;
-			}
+		button {
+			margin-left: 4px;
 		}
 		
-		#volume {
-			width: 2em;
-			height: 1em;
-			display: inline-block;
+		#volume canvas {
+			display: block;
+			padding: 2px;
 		}
 	}
 	
@@ -183,6 +232,13 @@ input,button {
 	}
 }
 
+// Used to lock the controls while something is being configured (feels better)
+#player.config-control-lock {
+	#controls {
+		opacity: 1;
+	}
+}
+
 .cost::before {
 	content: "";
 	background: url('../money.svg');
@@ -192,11 +248,32 @@ input,button {
 	display: inline-block;
 }
 
-#subscribe {
+.interact-button {
 	border: none;
+	outline: none;
 	background: none;
 	padding: 0;
+}
+
+.option-button {
+	width: 2em;
+	height: 2em;
+	background: @button-bg;
+	border: 1px solid @main-border;
+	border-radius: @rounding;
+}
+
+.option-button:hover {
+	background: lighten(@button-bg,5%);
+}
+
+#subscribe {
 	margin-left: 6px;
+}
+
+#genre-menu {
+	top: -13px;
+	margin-bottom: -4px;
 }
 
 #genre-menu.open {
@@ -204,14 +281,10 @@ input,button {
 		padding: 4px 4px 12px 4px;
 		margin: -1px;
 		z-index: 9999;
-		background: @player-fg;
+		background: ghostwhite;
 		border: 1px solid #AAA;
-		border-bottom: 1px solid @player-fg;
-		border-radius: @rounding*2 @rounding*2 0 2px;
-	}
-	
-	#add-genre.open {
-		padding: 2px 2px 12px 2px;
+		border-bottom: none;
+		border-radius: @rounding*2 @rounding*2 0 0;
 	}
 	
 	.dropdown-menu {
@@ -220,6 +293,7 @@ input,button {
 		border-color: #AAA;
 		margin-left: -1px;
 		padding: 3px;
+		background: ghostwhite;
 	}
 }
 
@@ -250,7 +324,8 @@ input,button {
 }
 
 #info {
-	padding: 8px 2% 4px 2%;
+	padding: 0 2% 0 2%;
+	margin-bottom: 4px;
 	display: block;
 	
 	#predd {
@@ -272,15 +347,6 @@ input,button {
 	
 	button {
 		padding: @rounding*2;
-		background: none;
-		border: none;
-		outline: none;
-	}
-	
-	#likebar {
-		width: 100%;
-		height: 4px;
-		background: yellow;
 	}
 }
 
@@ -297,22 +363,12 @@ input,button {
 	
 	li {
 		padding: 6px;
-		
-		button {
-			width: 2em;
-			height: 2em;
-			
-			background: @button-bg;
-			
-			border:1px solid @main-border;
-			border-radius: @rounding;
-		}
 	}
 	
 	li.active {
 		background: @main-fg;
 		border: 1px solid @main-border;
-		border-bottom: 1px solid @main-fg;
+		border-bottom: none;
 		border-radius: @rounding*3 @rounding*3 0 0;
 		
 		padding: 5px;
@@ -328,6 +384,8 @@ input,button {
 		flex-grow: 1;
 		height: 2em;
 		
+		margin: 1px 0 -1px 0;
+		
 		background: white;
 		border: 1px solid @main-border;
 		border-radius: @rounding 0 0 @rounding;
@@ -338,6 +396,12 @@ input,button {
 		border-radius: 0 @rounding @rounding 0;
 		border-left: none;
 	}
+}
+
+.more-info {
+	display: inline-block;
+	margin-left: 4px;
+	cursor: help;
 }
 
 #omnipanel {
@@ -352,15 +416,8 @@ input,button {
 	
 	#search-panel {
 		button {
-			width: 2em;
-			height: 2em;
-			
 			font-size: 11pt;
 			margin-left: 8px;
-			
-			background: @button-bg;
-			border: 1px solid @main-border;
-			border-radius: @rounding;
 		}
 	}
 	
@@ -541,6 +598,21 @@ input,button {
 	}
 }
 
+#profile-panel {
+	#name-as {
+		margin: 0 8px 0 8px;
+	}
+	
+	input {
+		height: 2em;
+	}
+	
+	button {
+		width: 2em;
+		height: 2em;
+	}
+}
+
 #cloud-panel {
 	#new-video {
 		width: 2em;
@@ -573,18 +645,20 @@ input,button {
 	}
 }
 
+code.preference {
+	font-family: Courier New;
+	font-size: 10pt;
+	border: 1px solid @main-border;
+	border-radius: 4px;
+	background: ghostwhite;
+	
+	padding: 3px;
+	
+	color: #c7254e;
+	text-overflow: ellipsis
+}
+
 #video-info-panel {
-	code {
-		font-family: Courier New;
-		font-size: 10pt;
-		border: 1px solid @main-border;
-		border-radius: 4px;
-		background: ghostwhite;
-		
-		padding: 3px;
-		
-		color: #c7254e;
-	}
 	/*
 	.views {
 		display: inline-block;
@@ -596,5 +670,32 @@ input,button {
 	
 	time {
 		display: inline-block;
+	}
+}
+
+#flag-panel {
+	input[type=radio] {
+		margin-right: 4px;
+	}
+	
+	input[type=checkbox] {
+		margin-right: 4px;
+	}
+	
+	#evidence-bag {
+		label {
+			vertical-align: top;
+		}
+		
+		#evidence {
+			resize: none;
+			width: 80%;
+			height: 3.5em;
+			margin-left: 6px;
+		}
+	}
+	
+	#no-evidence {
+		color: crimson;
 	}
 }
