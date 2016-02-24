@@ -1,6 +1,7 @@
 var mysql = require('mysql');
-var http = require("http");
-var fs = require("fs");
+var ipfs  = require('ipfs-api');
+var http  = require("http");
+var fs    = require("fs");
 
 var debug = {
     debug_mode : true,
@@ -54,7 +55,57 @@ http.createServer(function (request, response, fd) {
     if (url == "/")
         url = "/index.html";
 
-    // Load any files that match the request URL
+    /******************/
+    /* Contract Calls */
+    /******************/
+    if ((new RegExp("^/recommended.json")).test(url)) {
+        //queryFromRecommended(preference, number, success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/next_video.json")).test(url)) {
+        //queryNextVideo(video_id, success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/related.json")).test(url)) {
+        //queryFromRelated(preference, number, current, success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/tag_query.json")).test(url)) {
+        //queryFromTags(preference, number, tags, success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/average_preference.json")).test(url)) {
+        //queryAveragePreference(success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/metadata.json")).test(url)) {
+        //queryMetadata(video_id, success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/chore.json")).test(url)) {
+        //reqChore();
+        return;
+    }
+
+    if ((new RegExp("^/upload")).test(url)) {
+        //uploadFile(preference, video_ipfs_hash, block_hashes, metadata, success, failure);
+        return;
+    }
+
+    if ((new RegExp("^/add_comment")).test(url)) {
+        //addComment(video_id, markdown, user_id, reply_id, success, failure);
+        return;
+    }
+
+    /**********************/
+    /* Static File Loader */
+    /**********************/
     fs.readFile("static" + url,  function (err, data) {
         debug.log("err: ", err, "\ndata: ", data);
         if (typeof data !== "undefined") {
@@ -187,7 +238,7 @@ function reqChore() {
 
 // "Uploads" a file (only metadata) - user preference is used to initialize the video’s feature vector
 // TODO: implement the actual logic to do this
-function uploadFile(preference, video_ipfs_hash, block_hashes, metadata) {
+function uploadFile(preference, video_ipfs_hash, block_hashes, metadata, success, failure) {
 }
 
 //Add a comment
