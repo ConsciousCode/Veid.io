@@ -1,29 +1,11 @@
 //http://usenix.org/legacy/events/sec07/tech/full_papers/boyen/boyen.pdf
 
-var utf8_encode = (function() {
-	/** monsur.hossa.in/2012/07/20/utf-8-in-javascript.html **/
-	if(TextEncoder) {
-		return function(s) {
-			return Array.from(new TextEncoder("utf-8").encode(s));
-		}
-	}
-	else {
-		return function(s) {
-			var v = [], es = unescape(encodeURIComponent(s));
-			for(var i = 0; i < es.length; ++es) {
-				v.push(es.charCodeAt(i));
-			}
-			return v;
-		};
-	}
-})();
-
 function H(a, b) {
 	if(typeof a == "string") {
-		a = utf8_encode(a);
+		a = util.str2arr(a);
 	}
 	if(typeof b == "string") {
-		b = utf8_encode(b);
+		b = util.str2arr(b);
 	}
 	
 	var d = forge.md.sha256.create().update(a.concat(b)).digest().data, v = [];
@@ -46,47 +28,56 @@ function bigmod(big, m) {
 
 var Q = 10;
 
-function prepare(w, t) {
+function prepare(w) {
 	var r = [];
 	for(var i = 0; i < 32; ++i) {
-		r.push(i);//(Math.random()*256)|0);
+		r.push((Math.random()*256)|0);
 	}
 	
-	var z = H(w, r), y = [];
+	var z = H(w, r), y0 = z, y = [], i = 0, respond;
 	
-	for(var i = 0; i < t; ++i) {
+	var calc = setInterval(function() {
+		if(respond) {
+			respond(H(y0, z), r, H(z, r));
+			clearInterval(calc);
+			return;
+		}
+		
+		++i;
+		
 		y.push(z);
 		for(var q = 0; q < Q; ++q) {
-			z = H(z, y[bigmod(z, i+1)]);
+			z = H(z, y[bigmod(z, i)]);
 		}
-	}
+	}, 0);
 	
-	return {
-		h: H(y[0], z),
-		r: r,
-		key: H(z, r)
-	};
+	return function(ret) {
+		respond = ret;
+	}
 }
 
-function extract(w, v, t) {
-	var h = v.h, r = v.r, z = H(w, r), y = [];
-	for(var i = 0; i < t; ++i) {
+function extract(w, h, r, fulfill) {
+	var z = H(w, r), y = [], y0 = z, i = 0;
+	
+	var calc = setInterval(function() {
+		++i;
+		
 		y.push(z);
-		for(var q = 0; q < Q; ++q) {
-			z = H(z, y[bigmod(z, i+1)]);
+		iter: for(var q = 0; q < Q; ++q) {
+			z = H(z, y[bigmod(z, i)]);
 			
-			var ih = H(y[0], z);
+			var ih = H(y0, z);
 			for(var j = 0; j < ih.length; ++j) {
 				if(ih[j] != h[j]) {
-					break;
+					continue iter;
 				}
 			}
 			
-			if(j == ih.length) {
-				return H(z, r);
-			}
+			fulfill(H(z, r));
 		}
-	}
+	}, 0);
 	
-	throw new Error("Failed to terminate");
+	return function() {
+		clearInterval(calc);
+	}
 }

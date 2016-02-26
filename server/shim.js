@@ -33,6 +33,27 @@ app.get("/login!", function(req, res) {
 	sql.end();
 });
 
+app.get("/register!", function(req, res) {
+	sql.connect();
+	sql.query("UPDATE SELECT * FROM users WHERE username=?",
+		[req.query.username],
+		function(err, rows) {
+			if(rows.length) {
+				res.send(JSON.stringify({
+					username: rows[0].username,
+					public: btoa(rows[0].public),
+					nonce: btoa(rows[0].nonce),
+					private: btoa(rows[0].private)
+				}));
+			}
+			else {
+				res.send();
+			}
+		}
+	);
+	sql.end();
+});
+
 app.get("/user!", function(req, res) {
 	
 });
