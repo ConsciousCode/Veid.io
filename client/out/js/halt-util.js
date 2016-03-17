@@ -1,37 +1,12 @@
 'use strict';
 
-var utf8_encode = (function() {
-	/** monsur.hossa.in/2012/07/20/utf-8-in-javascript.html **/
-	if(TextEncoder) {
-		return function(s) {
-			return Array.from(new TextEncoder("utf-8").encode(s));
-		}
+function H(a, b, next) {
+	if(crypto) {
+		crypto.subtle.digest("SHA-256", a.concat(b)).then(next);
 	}
 	else {
-		return function(s) {
-			var v = [], es = unescape(encodeURIComponent(s));
-			for(var i = 0; i < es.length; ++es) {
-				v.push(es.charCodeAt(i));
-			}
-			return v;
-		};
+		throw new Error("Haven't implemented H for browsers without crypto");
 	}
-})();
-
-function H(a, b) {
-	if(typeof a == "string") {
-		a = utf8_encode(a);
-	}
-	if(typeof b == "string") {
-		b = utf8_encode(b);
-	}
-	
-	var d = forge.md.sha256.create().update(a.concat(b)).digest().data, v = [];
-	for(var i = 0; i < d.length; ++i) {
-		v.push(d.charCodeAt(i));
-	}
-	
-	return v;
 }
 
 function bigmod(big, m) {

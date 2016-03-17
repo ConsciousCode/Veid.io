@@ -8,14 +8,6 @@
 
 @rounding: 2px;
 
-.no-select {
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-o-user-select: none;
-	user-select: none;
-}
-
 html {
 	margin: 0;
 	padding: 0;
@@ -30,6 +22,9 @@ body {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	margin: 0;
+	
+	font-family: Lato;
 }
 
 h3 {
@@ -37,206 +32,49 @@ h3 {
 	margin-bottom: 10px;
 }
 
-.left {
-	float: left;
-	display: inline-block;
-}
-
-.right {
-	float: right;
-	display: inline-block;
-}
-
-.clearfix {
-	clear: both;
-	margin: 12px;
+h5 {
+	margin: 0;
 }
 
 input,button {
 	outline: none;
 }
 
-#player:hover {
-	#controls {
-		opacity: 1;
-	}
+input:disabled {
+	background: lightgrey;
+	color: grey;
+	
+	border: 1px solid grey;
 }
 
-.flex-between {
-	display: flex;
-	justify-content: space-between;
+button:disabled {
+	background: lightgrey;
+	color: grey;
+	
+	border: 1px solid grey;
+	border-radius: 2px;
 }
 
-.flex-around {
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
+button {
+	cursor: pointer;
+}
+
+input.error {
+	background: #FFCCCC;
+	color: #881820;
+	border-color: #881820;
+}
+
+button.icon {
+	background: none;
+	border: none;
+	outline: none;
+	padding: 0;
 }
 
 #player {
-	display: table;
-	position: relative;
 	margin: @player-margin auto 0 auto;
-	
-	max-width: 100%-2*@player-margin;
-	
-	video {
-		max-width: 100%;
-		display: block;
-	}
-	
-	#controls {
-		cursor: default;
-		
-		opacity: 0;
-		transition: opacity 0.15s;
-		
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background: fadeout(@player-bg,30%);
-		background: linear-gradient(fadeout(@player-bg,80%),fadeout(@player-bg,20%));
-		color: @player-fg;
-		font-size: 14pt;
-		
-		#timebar {
-			display: block;
-			width: 100%;
-			height: 18px;
-			top: -5px;
-			position: absolute;
-			padding: 6px 0 1px 0;
-			cursor: pointer;
-			
-			progress {
-				width: 100%;
-				height: 3px;
-				background: darken(@player-bg,10%);
-				display: block;
-			}
-			
-			#seektime {
-				display: none;
-			}
-			
-			#progress {
-				background: blue;
-				background: linear-gradient(to top,darken(blue,20%),blue 50%,lighten(blue,20%));
-				height:3px;
-				width:100%;
-			}
-		}
-		
-		#timebar:hover {
-			top: -6px;
-			
-			progress {
-				height: 5px;
-			}
-			
-			#seektime {
-				position: absolute;
-				display: block;
-				background: fadeout(@player-bg,30%);
-				bottom: 12px;
-				font-size: 9pt;
-				padding: 2px;
-				border-radius: @rounding @rounding 0 0;
-			}
-			
-			#progress {
-				height: 5px;
-			}
-		}
-		
-		#timebar progress::-webkit-progress-bar {
-			background: darken(@player-bg,20%);
-			background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
-		}
-		
-		#timebar progress::-webkit-progress-value {
-			background: blue;
-			background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
-			position: relative;
-		}
-		
-		#timebar:hover progress[value]::-webkit-progress-value::after {
-			content: '';
-			animation-duration: 0.5s;
-			animation-iteration-count: 1;
-			animation-name: marker-in;
-			position: absolute;
-			border-radius: 100%;
-			right: -2px;
-			top: -2px;
-			background-color: white;
-		}
-		
-		@keyframes marker-in {
-			from {
-				width: 1px;
-				height: 1px;
-			}
-			
-			to {
-				width: 9px;
-				height: 9px;
-			}
-		}
-		
-		button {
-			background: none;
-			border: none;
-			padding: 0;
-		}
-		
-		#control-buttons {
-			padding: 6px 4px 3px 2px;
-		}
-		
-		#time-text {
-			font-size: 10pt;
-			margin-bottom: -3px;
-			
-			#watched-time {
-				padding: 2px;
-				cursor: default;
-			}
-			
-			#duration-time {
-				padding: 2px;
-				cursor: default;
-			}
-		}
-		
-		button {
-			margin-left: 4px;
-		}
-		
-		#volume canvas {
-			display: block;
-			padding: 2px;
-		}
-	}
-	
-	#controls::after {
-		clear: both;
-	}
-}
-
-// Used for locking the controls to be visible even if the mouse isn't hovering
-#player.control-lock {
-	#controls {
-		opacity: 1;
-	}
-}
-
-// Used to lock the controls while something is being configured (feels better)
-#player.config-control-lock {
-	#controls {
-		opacity: 1;
-	}
+	max-width: 100% - 2*@player-margin;
 }
 
 .cost::before {
@@ -248,61 +86,57 @@ input,button {
 	display: inline-block;
 }
 
+.pill-group > * {
+	border: 1px solid @main-border;
+	border-right: none;
+}
+
+.pill-group > :first-child {
+	border-top-left-radius: @rounding;
+	border-bottom-left-radius: @rounding;
+}
+
+.pill-group > :last-child {
+	border-top-right-radius: @rounding;
+	border-bottom-right-radius: @rounding;
+	
+	border-right: 1px solid @main-border;
+}
+
 .interact-button {
 	border: none;
 	outline: none;
 	background: none;
 	padding: 0;
+	color: @player-bg;
+}
+
+.interact-button:hover {
+	color: lighten(@player-bg, 5%);
 }
 
 .option-button {
 	width: 2em;
 	height: 2em;
 	background: @button-bg;
-	border: 1px solid @main-border;
-	border-radius: @rounding;
+	color: @player-bg;
 }
 
 .option-button:hover {
 	background: lighten(@button-bg,5%);
 }
 
-#subscribe {
-	margin-left: 6px;
-}
-
-#genre-menu {
-	top: -13px;
-	margin-bottom: -4px;
-}
-
-#genre-menu.open {
-	#add-genre {
-		padding: 4px 4px 12px 4px;
-		margin: -1px;
-		z-index: 9999;
-		background: ghostwhite;
-		border: 1px solid #AAA;
-		border-bottom: none;
-		border-radius: @rounding*2 @rounding*2 0 0;
-	}
+.balance {
+	font-family: Schoolbell;
 	
-	.dropdown-menu {
-		margin-top: 0;
-		border-top-left-radius: 0;
-		border-color: #AAA;
-		margin-left: -1px;
-		padding: 3px;
-		background: ghostwhite;
+	.fraction {
+		display: flex;
+		flex-direction: rows;
+		
+		.numerator {
+			font-size: 0.25em;
+		}
 	}
-}
-
-#genre-menu {
-	display: inline-block;
-}
-
-#preferences {
-	display: inline-block;
 }
 	
 .likebar {
@@ -310,61 +144,55 @@ input,button {
 	width: 100%;
 	height: 5px;
 	
-	.dislikes {
-		background: red;
+	.norm {
+		background: slateblue;
 	}
 	
-	.neutral {
-		background: yellow;
-	}
-	
-	.likes {
-		background: green;
-	}
-}
-
-#info {
-	padding: 0 2% 0 2%;
-	margin-bottom: 4px;
-	display: block;
-	
-	#predd {
-		display: flex;
-		justify-content: space-between;
-		
-		#creator-info {
-			font-size: 14pt;
-		}
+	.tips {
+		background: gold;
 	}
 }
 
 #interact {
 	font-size: 18pt;
 	
-	#likes {
-		display: inline-table;
-	}
-	
 	button {
-		padding: @rounding*2;
-	}
-}
-
-.tabs {
-	display: block;
-}
-
-.tabs ul {
-	list-style-type: none;
-	display: flex;
-	margin: 0 0 -1px 0;
-	padding: 0 12px 0 12px;
-	font-size: 14pt;
-	
-	li {
 		padding: 6px;
 	}
-	
+}
+
+#search {
+	input {
+		flex-grow: 1;
+		
+		background: white;
+		padding:0.5em;
+	}
+}
+
+.more-info {
+	display: inline-block;
+	margin-left: 4px;
+	cursor: help;
+}
+
+#omnipanel .content > section{
+	background: @main-fg;
+	border-top: 1px solid @main-border;
+}
+
+#search-panel {
+	button {
+		font-size: 11pt;
+		margin: 0 4px 0 4px;
+	}
+}
+
+#search-results {
+	margin-top: 12px;
+}
+
+#omnipanel {
 	li.active {
 		background: @main-fg;
 		border: 1px solid @main-border;
@@ -376,77 +204,37 @@ input,button {
 	}
 }
 
-#search {
-	display: flex;
-	flex-grow: 1;
-	
-	input {
-		flex-grow: 1;
-		height: 2em;
-		
-		margin: 1px 0 -1px 0;
-		
-		background: white;
-		border: 1px solid @main-border;
-		border-radius: @rounding 0 0 @rounding;
-		padding:0.5em;
-	}
-	
-	button {
-		border-radius: 0 @rounding @rounding 0;
-		border-left: none;
-	}
-}
-
-.more-info {
-	display: inline-block;
-	margin-left: 4px;
-	cursor: help;
-}
-
-#omnipanel {
-	left: 0;
-	right: 0;
-	bottom: 0;
-	
-	background: @main-fg;
-	border-top: 1px solid @main-border;
-	flex: 1;
-	z-index: -99;
-	
-	#search-panel {
-		button {
-			font-size: 11pt;
-			margin-left: 8px;
-		}
-	}
-	
-	section {
-		display: none;
-		padding: 12px;
-	}
-	
-	section.active {
-		display: block;
-	}
-}
-
 #omnipanel::after {
 	content: "";
 	height: 12px;
 	display: block;
 }
 
-.preview {
-	display: flex;
-	width: 100%;
+.thumb-container {
+	position: relative;
+	display: block;
 }
 
-.small-preview {
+.preview {
+	border: 1px solid @main-border;
+	border-radius: 0 0 4px 4px;
+	overflow: hidden;
+	
+	img {
+		width: 100%;
+		margin-bottom: -4px;
+	}
+	.likebar {
+		border-top: 1px solid @main-border;
+	}
+}
+
+.grid-preview {
 	width: 256px;
 	height: 256px;
 	display: flex;
 	flex-direction: column;
+	padding: 3px;
 	
 	background: @main-bg;
 	border: 1px solid @main-border;
@@ -455,15 +243,6 @@ input,button {
 	.metadata {
 		padding: 3px;
 		flex: 1;
-	}
-	
-	.thumb-container {
-		position:relative;
-	}
-	
-	img {
-		width: 100%;
-		border: 1px solid @main-border;
 	}
 	
 	.video-length {
@@ -498,11 +277,6 @@ input,button {
 	.views::after {
 		content: " views";
 	}
-	
-	.likebar {
-		border-top: 1px solid @main-border;
-		border-radius: 0 0 @rounding*2 @rounding*2;
-	}
 }
 
 .list-preview {
@@ -514,6 +288,9 @@ input,button {
 	border: 1px solid @main-border;
 	border-radius: @rounding*2;
 	
+	margin: 3px;
+	margin-top: 15px;
+	
 	.thumb {
 		width: 248px;
 	}
@@ -521,15 +298,6 @@ input,button {
 	.metadata {
 		padding: 3px;
 		flex: 1;
-	}
-	
-	.thumb-container {
-		position:relative;
-	}
-	
-	img {
-		width: 100%;
-		border: 1px solid @main-border;
 	}
 	
 	.video-length {
@@ -562,40 +330,6 @@ input,button {
 	.views::after {
 		content: " views";
 	}
-	
-	.likebar {
-		border: 1px solid @main-border;
-		border-top: none;
-		border-radius: 0 0 @rounding*2 @rounding*2;
-	}
-}
-
-#comment-panel {
-	#new-comment {
-		display:flex;
-		justify-content: space-around;
-		
-		textarea {
-			resize: none;
-			width: 90%;
-			height: 5em;
-			
-			flex: 1;
-			
-			border: 1px solid @main-border;
-			border-radius: @rounding;
-		}
-		
-		#upload-comment {
-			width: 2em;
-			height: 2em;
-			
-			background: @button-bg;
-			border: 1px solid @main-border;
-			border-radius: @rounding;
-			margin-left: 12px;
-		}
-	}
 }
 
 #profile-panel {
@@ -613,38 +347,6 @@ input,button {
 	}
 }
 
-#cloud-panel {
-	#new-video {
-		width: 2em;
-		height: 2em;
-		
-		float: right;
-		margin-bottom: 12px;
-		
-		background: @button-bg;
-		border: 1px solid @main-border;
-		border-radius: @rounding;
-	}
-	
-	.metadata {
-		position: relative;
-	}
-	
-	.erase-video {
-		width: 2em;
-		height: 2em;
-		
-		top: auto; /* Bootstrap sets top: 0 */
-		right: 0;
-		bottom: 0;
-		position: absolute;
-		
-		background: @button-bg;
-		border: 1px solid @main-border;
-		border-radius: @rounding;
-	}
-}
-
 code.preference {
 	font-family: Courier New;
 	font-size: 10pt;
@@ -659,11 +361,6 @@ code.preference {
 }
 
 #video-info-panel {
-	/*
-	.views {
-		display: inline-block;
-	}
-	*/
 	.views::after {
 		content: " views";
 	}

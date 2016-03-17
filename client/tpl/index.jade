@@ -3,233 +3,235 @@ doctype html
 html
 	head
 		meta(http-equiv="Content-Type" content="text/html; charset=UTF-8")
-		title Veido
-		link(rel="stylesheet" href="css/bootstrap.min.css")
+		title Veid.io
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato")
+		link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Schoolbell")
+		link(rel="stylesheet" href="css/font-awesome.min.css")
+		link(rel="stylesheet" href="css/util.css")
 		link(rel="stylesheet" href="css/main.css")
-		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
-		script(src="js/bootstrap.min.js")
+		script(src="js/jquery.min.js")
+		script(src="js/conditional.js")
+		script(src="js/ipfs.js")
+		script(src="js/struct.js")
+		script(src="js/forge.min.js")
+		script(src="js/jsbn.js")
+		script(src="js/jsbn2.js")
+		script(src="js/prng.js")
+		script(src="js/rng.js")
+		script(src="js/rsa.js")
+		script(src="js/rsa2.js")
+		script(src="js/halthash.js")
+		script(src="js/consensus.js")
 		script(src="js/main.js")
 	body
-		section#player
-			noscript
-				h3 This website requires JavaScript to be enabled. This is unavoidable until the technologies become more mature.
-			video(controls=false preload="metadata")
-				source(src="http://vjs.zencdn.net/v/oceans.mp4" type='video/mp4')
-				source(src="http://vjs.zencdn.net/v/oceans.webm" type="video/webm")
-			#controls.no-select
-				#timebar
-					progress(max=1)
-						#progress
-					#seektime
-				#control-buttons.flex-between
-					.flex-around
-						#time-text.flex-around
-							#watched-time
-							div / 
-							#duration-time
-						button#play.glyphicon.glyphicon-play
-					.flex-around
-						button#mute.glyphicon.glyphicon-volume-up
-						button#volume
-							canvas(width=36 height=18)
-						button#fullscreen.glyphicon.glyphicon-fullscreen
+		template#grid-preview-tpl
+			.box
+				.grid-preview.rows
+					.preview.rows
+						a.thumb-container.overlay
+							img.thumb
+							.video-length.left.bottom
+						.likebar
+							.norm
+							.tips
+					.metadata.rows
+						h5.title
+						.cols
+							.author.left
+							.views.right
+		template#list-preview-tpl
+			.list-preview.rows
+				.preview.rows
+					a.thumb-container.overlay
+						img.thumb
+						.video-length.left.right
+					.likebar
+						.norm
+						.tips
+				.metadata.rows
+					h4.title
+					.flex-between
+						.author.left
+						.views.right
+					.description
+		script(src="js/player.js")
 		section#info
 			h3#title Sample Title
-			#predd
+			.flex-between
 				#creator-info
 					#creator-avatar
 					span#creator-name Sample Name
-					button#subscribe.interact-button.glyphicon.glyphicon-star-empty
+					| 
+					button#subscribe.interact-button.fa.fa-star-o
 				#interact
-					.dropdown#genre-menu
-						button.interact-button.glyphicon.glyphicon-tag#add-genre(data-toggle="dropdown" aria-haspopup=true aria-expanded=true)
-							span.caret
-						ul.dropdown-menu(aria-labelledby="add-genre")
-							li A
-							li B
-							li C
-							li D
-							li.divider(role="separator")
-							li Separate
-					#preferences
-						button#dislike.interact-button.glyphicon.glyphicon-minus(title="Less of this")
-						button#like.interact-button.glyphicon.glyphicon-plus(title="More of this")
-						button#favorite.interact-button.glyphicon.glyphicon-heart-empty(title="Favorite")
-						button#love.interact-button.glyphicon.glyphicon-gift(title="Tip the creator")
+					button.interact-button.fa.fa-tags#add-genre
+					.rows
+						span#preferences.cols
+							button#dislike.interact-button.fa.fa-fw.fa-minus(title="Less of this")
+							button#like.interact-button.fa.fa-fw.fa-plus(title="More of this")
+							button#favorite.interact-button.fa.fa-fw.fa-heart-o(title="Favorite")
+							button#love.interact-button.fa.fa-fw.fa-gift(title="Tip the creator")
 						.likebar
-							.dislikes(style="flex:1")
-							.neutral(style="flex:2")
-							.likes(style="flex:3")
-		section.tabs
-			ul
-				li#search.active
-					input(type="text" title="Search" autocomplete="off" spellcheck="off")
-					button.option-button.glyphicon.glyphicon-search(title="Search")
-				li#video-info
-					button.option-button.glyphicon.glyphicon-question-sign(title="Dooblydoo")
-				li#comment
-					button.option-button.glyphicon.glyphicon-comment(title="Comments")
-				li#flag
-					button.option-button.glyphicon.glyphicon-flag(title="Report an issue")
-				li#profile
-					button.option-button.glyphicon.glyphicon-user(title="Profile")
-				li#cloud
-					button.option-button.glyphicon.glyphicon-cloud(title="Manage uploads")
-				li#config
-					button.option-button.glyphicon.glyphicon-cog(title="Settings")
+							.norm(style="flex:1")
+							.tips(style="flex:3")
+		section#omnipanel
+			ul.tabs
 				li#site-info
-					button.option-button.glyphicon.glyphicon-certificate(title="About")
-		#omnipanel
-			section#search-panel.active
-				.left
-					button#search-current.option-button.glyphicon.glyphicon-eject(title="Similar to the current video")
-					button#search-mine.option-button.glyphicon.glyphicon-pushpin(title="Stuff you'll like")
-					button#search-trending.option-button.glyphicon.glyphicon-tree-deciduous(title="Average trends of what people like")
-					button#search-hot.option-button.glyphicon.glyphicon-fire(title="What's popular right now")
-					button#search-liked.option-button.glyphicon.glyphicon-apple(title="Well-favored videos")
-					button#search-random.option-button.glyphicon.glyphicon-flash(title="Random")
-				.right
-					button#search-grid.option-button.glyphicon.glyphicon-th(title="Grid")
-					button#search-list.option-button.glyphicon.glyphicon-th-list(title="List")
-				.clearfix
-				+small-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000})
-				br
-				+list-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
-				.clearfix
-			section#video-info-panel
-				code.preference hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]
-				.views 10,000
-				time.published Nov 25, 2015
-				.cost 10
-				p This is a simple description for a video about dolphins or something. Why are cats related? Who knows. These descriptions will be rendered markdown loaded from IPFS.
-				.tags #dolphins #fish #first #public-domain
-				.license Creative Commons
-			section#comment-panel
-				#new-comment
-					textarea
-					.right
-						button#upload-comment.glyphicon.glyphicon-send(title="Post comment")
-			section#flag-panel
-				p
-					button#get-flag Review a flag
-					span#get-flag-time 00
-					p #[span.cost 1] -> #[span.cost 3]
-				#flag-types
-					input(type="radio" name="issue" value="sexual")
-					| Sexual content
-					.more-info.glyphicon.glyphicon-question-sign(title="Pornography and objectionable nudity in general")
-					br
-					input(type="radio" name="issue" value="child-abuse")
-					| Child abuse
-					.more-info.glyphicon.glyphicon-question-sign(title="Sexual, predatory, physical, or emotional abuse of children")
-					br
-					input(type="radio" name="issue" value="violent")
-					| Violence
-					.more-info.glyphicon.glyphicon-question-sign(title="Displays of excessive violence with no greater merit")
-					br
-					input(type="radio" name="issue" value="hateful")
-					| Hate speech
-					.more-info.glyphicon.glyphicon-question-sign(title="Provocations of hatred toward individuals or groups (not criticism)")
-					br
-					input(type="radio" name="issue" value="dangerous")
-					| Dangerous content
-					.more-info.glyphicon.glyphicon-question-sign(title="Content which encourages viewers to participate in dangerous activities")
-					br
-					input(type="radio" name="issue" value="copyright")
-					| Copyright
-					.more-info.glyphicon.glyphicon-question-sign(title="Misuse of copyrighted material")
-				p#flag-fromto #[span.cost#flag-from 1] -> #[span.cost#flag-to 3]
-				p
-					input#use-timestamp(type="checkbox")
-					| Include current timestamp
-				p#evidence-bag
-					label(for="evidence") Evidence: 
-					textarea#evidence
-				p#no-evidence Providing an explanation for your flag helps reviewers to decide if it's correct more quickly.
-				button#submit-flag Submit
-			section#profile-panel
-				table
-					tbody
-						tr
-							td Username
-							td
-								input#set-username
-								.more-info.glyphicon.glyphicon-question-sign(title="You don't need a username, but having one lets you log in when you clear your browser history")
-						tr
-							td Password
-							td
-								input(type="password")#set-password
-								.more-info.glyphicon.glyphicon-question-sign(title="To set your username, you need a password too")
-						tr
-							td
-							td
-								input(type="password")#confim-password
-				table
-					tbody
-						tr
-							td
-								img#avatar-preview
-							td
-								input(placeholder="IPFS hash of avatar")
-				h4 User preferences
-				input(value="hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]")
-				span#name-as.glyphicon.glyphicon-arrow-right
-				input(placeholder="Name for this preference")
-				button#new-pref.glyphicon.glyphicon-plus
-				table
-					tbody
-						tr
-							td Anime
-							td
-								input(disabled value="hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]")
-				h4 Favorites
-				+list-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
-				.clearfix
-			section#cloud-panel
-				button#new-video.glyphicon.glyphicon-cloud-upload
-				+upload-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
-			section#config-panel
-				table
-					tbody
-						tr
-							td Username
-							td#username
-						tr
-							td Preference
-							td#preference
-			section#site-info-panel
-				p (For new users, consider heading to the #[a(href="#?special=intro") video] we compiled which condenses this information)
-				ul
-					li: a(href="#faq-1") What is this?
-					li: a(href="#faq-2") How does it work?
-					li: a(href="#faq-3") How do I use it?
-					li: a(href="#faq-4") Does that mean I have to pay?
-					li: a(href="#faq-5") Why have your own virtual currency?
-					li: a(href="#faq-6") What about content creators?
-					li: a(href="#faq-7") How can I help a creator more directly?
-					li: a(href="#faq-8") How are videos recommended?
-					li: a(href="#faq-9") What about copyrighted material?
-					li: a(href="#faq-10") Can I advertise?
-				h3 FAQ
-				h4#faq-1 What is this?
-				p Veid.io is a distributed, crowdsourced video distribution platform using brand new technologies to support a better experience for everyone involved. To put it simply, we're not run by robots; we're run by #[em you]. We're a collaborative effort of all those involved, from the storage to the recommendation engine.
-				h4#faq-2 How does it work?
-				p The underlying technologies we will use are #[a(href="https://ipfs.io/") IPFS], #[a(href="https://filecoin.io/") Filecoin], and #[a(href="https://enigma.media.mit.edu/") Enigma]. As Filecoin and Enigma are still up and coming, for now we'll be using an ordinary server to host metadata. Enigma allows us to create a distributed virtual server which is run by the users who use the site using blockchain technology and multiparty computation. IPFS enables long term storage of the actual videos using user filesystems, and Filecoin incentivizes longer term storage of those files.
-				h4#faq-3 How do I use it?
-				p Because Enigma requires Bitcoin micropayments to function, you'll need a bitcoin address (??? need more info from Enigma)
-				h4#faq-4 Does that mean I have to pay?
-				p Yes, but unlike competitors, our business model is based around compensating you for participating. You can watch an ad, vote on the legitimacy of a flag, have your computer perform small "chores" behind the scenes, or even help host the content, and you'll get paid for doing any of these. Alternatively, you can deposit enough for a pizza and not have to worry about it for months. What's most important is that the choice is left up to you, and can be tailored to your personal tastes. And yes, you can net a small profit from your participation.
-				h4#faq-5 Why have your own virtual currency?
-				p Partly for user convenience (its value is set to #[span.cost 1] = 1 ad and lacks precision beyond 0.01) and partly as an optimization technique. A large number of transactions can occur entirely between users, and it'd be incredibly inefficient and wasteful to deploy a Bitcoin transactions for each one. Instead, users are encouraged to transfer from their account to a Bitcoin address infrequently, when a sizeable amount is accumulated.
-				h4#faq-6 What about content creators?
-				p Since ads are merely a means to an end to compensate users, it doesn't make sense for videos to have ads. Instead, content creators specify how much money they'd like to charge their viewers. These micropayments will tend to be so small that they'd be barely noticeable, but for a content creator who gets thousands or even millions of views, they'll add up to a legitimate pay, one which they deserve without corporate beaurocracy and convoluted popularity metrics to mess with it.
-				h4#faq-7 How can I help a creator more directly?
-				p You can host their videos using #[a(href="https://ipfs.io/") IPFS], which makes their videos load faster for other users, or you can tip them an extra micropayment by clicking the gift icon in the interaction bar. Other support can be provided through external services like #[a(href="https://patreon.com/") Patreon].
-				h4#faq-8 How are videos recommended?
-				p Unlike traditional centralized systems, we can't possibly support a centralized recommendation or popularity engine using advanced AI. Instead, videos have what are called #[em features], and users have similar numbers called #[em preferences]. Initially, these numbers won't mean anything. But the more users favor and unfavor videos, the closer these numbers will change to match intrinsic patterns. The closer a video's features are to your preferences, the more likely you are to like it.
-				p Because of this system, videos have no notion of "findability"; a video is recommended solely by its similarity to your preferences and the current video's features regardless of how many views or (un)favors it has. And because content creators are paid solely by views, formats which have been traditionally unsupported like #[em animation] are viable. It's a level playing field.
-				h4#faq-9 What about copyrighted material?
-				p Uploading copyrighted content is strictly against the community guidelines, and if a copyright strike is approved, you'll lose all profits from that video if applicable. However, as the moderation is crowdsourced from a distrustful incentive system, you can be sure that your videos won't be taken down so long as they're in line with fair use.
-				p People generally upload copyrighted content for one of two reasons; personal profit and a desire for easier access to media. Neither is supported by Veid.io, but because of our systems, copyright owners can easily upload their content without fear of it being stolen on a large scale, thus enabling easier access. Because of this, we strongly suggest you try to appeal to the copyright owner to upload their content instead of doing so yourself.
-				h4#faq-10 Can I advertise?
-				p Yes! We use a CPM model which is currently at around $3. Your ad is uploaded like any ordinary video (along with a JSON containing metadata), and given to users based on the similarity of the feature and preference vectors. At the end, a small captcha is given to the user to verify that they haven't hidden the ad. The captcha is displayed after 5 seconds; we strongly recommend that you make sure it's solvable after at minimum 10 seconds, or users may become annoyed and unfavor it.
+					.button.pill-group
+						button.option-button.fa.fa-info(title="About")
+					.content
+						section#site-info-panel
+							p (For new users, consider heading to the #[a(href="#?special=intro") video] we compiled which condenses this information)
+							ul
+								li: a(href="#faq-1") What is this?
+								li: a(href="#faq-2") How does it work?
+								li: a(href="#faq-3") How do I use it?
+								li: a(href="#faq-4") Does that mean I have to pay?
+								li: a(href="#faq-5") Why have your own virtual currency?
+								li: a(href="#faq-6") What about content creators?
+								li: a(href="#faq-7") How can I help a creator more directly?
+								li: a(href="#faq-8") How are videos recommended?
+								li: a(href="#faq-9") What about copyrighted material?
+								li: a(href="#faq-10") Can I advertise?
+							h3 FAQ
+							h4#faq-1 What is this?
+							p Veid.io is a distributed, crowdsourced video distribution platform using brand new technologies to support a better experience for everyone involved. To put it simply, we're not run by robots; we're run by #[em you]. We're a collaborative effort of all those involved, from the storage to the recommendation engine.
+							h4#faq-2 How does it work?
+							p The underlying technologies we will use are #[a(href="https://ipfs.io/") IPFS], #[a(href="https://filecoin.io/") Filecoin], and #[a(href="https://enigma.media.mit.edu/") Enigma]. As Filecoin and Enigma are still up and coming, for now we'll be using an ordinary server to host metadata. Enigma allows us to create a distributed virtual server which is run by the users who use the site using blockchain technology and multiparty computation. IPFS enables long term storage of the actual videos using user filesystems, and Filecoin incentivizes longer term storage of those files.
+							h4#faq-3 How do I use it?
+							p Because Enigma requires Bitcoin micropayments to function, you'll need a bitcoin address (??? need more info from Enigma)
+							h4#faq-4 Does that mean I have to pay?
+							p Yes, but unlike competitors, our business model is based around compensating you for participating. You can watch an ad, vote on the legitimacy of a flag, have your computer perform small "chores" behind the scenes, or even help host the content, and you'll get paid for doing any of these. Alternatively, you can deposit enough for a pizza and not have to worry about it for months. What's most important is that the choice is left up to you, and can be tailored to your personal tastes. And yes, you can net a small profit from your participation.
+							h4#faq-5 Why have your own virtual currency?
+							p Partly for user convenience (its value is set to #[span.cost 1] = 1 ad and lacks precision beyond 0.01) and partly as an optimization technique. A large number of transactions can occur entirely between users, and it'd be incredibly inefficient and wasteful to deploy a Bitcoin transactions for each one. Instead, users are encouraged to transfer from their account to a Bitcoin address infrequently, when a sizeable amount is accumulated.
+							h4#faq-6 What about content creators?
+							p Since ads are merely a means to an end to compensate users, it doesn't make sense for videos to have ads. Instead, content creators specify how much money they'd like to charge their viewers. These micropayments will tend to be so small that they'd be barely noticeable, but for a content creator who gets thousands or even millions of views, they'll add up to a legitimate pay, one which they deserve without corporate beaurocracy and convoluted popularity metrics to mess with it.
+							h4#faq-7 How can I help a creator more directly?
+							p You can host their videos using #[a(href="https://ipfs.io/") IPFS], which makes their videos load faster for other users, or you can tip them an extra micropayment by clicking the gift icon in the interaction bar. Other support can be provided through external services like #[a(href="https://patreon.com/") Patreon].
+							h4#faq-8 How are videos recommended?
+							p Unlike traditional centralized systems, we can't possibly support a centralized recommendation or popularity engine using advanced AI. Instead, videos have what are called #[em features], and users have similar numbers called #[em preferences]. Initially, these numbers won't mean anything. But the more users favor and unfavor videos, the closer these numbers will change to match intrinsic patterns. The closer a video's features are to your preferences, the more likely you are to like it.
+							p Because of this system, videos have no notion of "findability"; a video is recommended solely by its similarity to your preferences and the current video's features regardless of how many views or (un)favors it has. And because content creators are paid solely by views, formats which have been traditionally unsupported like #[em animation] are viable. It's a level playing field.
+							h4#faq-9 What about copyrighted material?
+							p Uploading copyrighted content is strictly against the community guidelines, and if a copyright strike is approved, you'll lose all profits from that video if applicable. However, as the moderation is crowdsourced from a distrustful incentive system, you can be sure that your videos won't be taken down so long as they're in line with fair use.
+							p People generally upload copyrighted content for one of two reasons; personal profit and a desire for easier access to media. Neither is supported by Veid.io, but because of our systems, copyright owners can easily upload their content without fear of it being stolen on a large scale, thus enabling easier access. Because of this, we strongly suggest you try to appeal to the copyright owner to upload their content instead of doing so yourself.
+							h4#faq-10 Can I advertise?
+							p Yes! We use a CPM model which is currently at around $3. Your ad is uploaded like any ordinary video (along with a JSON containing metadata), and given to users based on the similarity of the feature and preference vectors. At the end, a small captcha is given to the user to verify that they haven't hidden the ad. The captcha is displayed after 5 seconds; we strongly recommend that you make sure it's solvable after at minimum 10 seconds, or users may become annoyed and unfavor it.
+				li#profile
+					.button.pill-group
+						button.option-button.fa.fa-user(title="Profile")
+						span.balance.no-select
+							span#balance 371
+							sub 155
+					.content
+						section#profile-panel
+							.columns
+								.center
+									h4 Login
+									input(placeholder="Username")#login-username
+									br
+									input(type="password" placeholder="Password")#login-password
+									.right
+										span#login-time 0.0 s
+										button(disabled)#login-button.fa.fa-play
+								.center
+									h4 Register
+									input(placeholder="Desired username")#register-username
+									br
+									input(placeholder="Desired password")#register-password
+									br
+									input(placeholder="Confirm password")#register-confirm
+									.right
+										span#register-time 0.0 s
+										button(disabled)#register-button.fa.fa-play
+							p Click the play button to start a timer. The time indicates how long you'll have to wait with the right password. Click the stop button to end the timer.
+							p With a bad login attempt, the timer won't ever stop. Only you can tell if the password is wrong.
+							section.if-login
+								h4 User preferences
+								
+								input(placeholder="Name for this preference")
+								span#name-as.fa.fa-arrow-left
+								input(value="hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]")
+								button#new-pref.fa.fa-plus
+								table
+									tbody
+										tr
+											td
+										tr
+											td Anime
+											td
+												input(disabled value="hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]")
+								h4 Favorites
+								+list-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
+								br
+								button#new-video.fa.fa-cloud-upload
+								+upload-preview({title:"CATS",duration:120,thumb:"https://s-media-cache-ak0.pinimg.com/564x/96/59/0e/96590e80e7158614a533ee3bbb564639.jpg",likes:8,neutral:3,dislikes:1,user:"Author",views:10000,description:"This is a video about CATS OMFG"})
+				li#search.active
+					.button.pill-group
+						input(type="text" title="Search" autocomplete="off" spellcheck="off")
+						button.option-button.fa.fa-search(title="Search")
+					.content
+						section#search-panel.active
+							.flex-between
+								.cols
+									button#search-popular.option-button.fa.fa-line-chart(title="Popular")
+									button#search-hot.option-button.fa.fa-fire(title="Hot")
+									button#search-random.option-button.fa.fa-flash(title="Random")
+									button#search-global.option-button.fa.fa-globe(title="Global")
+								.cols
+									button#search-grid.option-button.fa.fa-th(title="Grid")
+									button#search-list.option-button.fa.fa-th-list(title="List")
+							#search-results
+				li#video-info
+					.button.pill-group
+						button.option-button.fa.fa-question(title="Dooblydoo")
+					.content
+						section#video-info-panel
+							code.preference hr51^P[02zMKAOp%$Mw.mj=(2Q7Xbm>OV{WcZ26@4l}!T=$]7mzMavLM.3qeM9u2X.twWjy+7xR-ysK]
+							.views 10,000
+							time.published Nov 25, 2015
+							.cost 10
+							p This is a simple description for a video about dolphins or something. Why are cats related? Who knows. These descriptions will be rendered markdown loaded from IPFS.
+							.tags #dolphins #fish #first #public-domain
+							.license Creative Commons
+				li#flag
+					.button.pill-group
+						button.option-button.fa.fa-flag(title="Report an issue")
+					.content
+						section#flag-panel
+							p
+								button#get-flag Review a flag
+								span#get-flag-time 00
+								p #[span.cost 1] -> #[span.cost 3]
+							#flag-types
+								input(type="radio" name="issue" value="sexual")
+								| Sexual content
+								.more-info.fa.fa-question-sign(title="Pornography and objectionable nudity in general")
+								br
+								input(type="radio" name="issue" value="child-abuse")
+								| Child abuse
+								.more-info.fa.fa-question-sign(title="Sexual, predatory, physical, or emotional abuse of children")
+								br
+								input(type="radio" name="issue" value="violent")
+								| Violence
+								.more-info.fa.fa-question-sign(title="Displays of excessive violence with no greater merit")
+								br
+								input(type="radio" name="issue" value="hateful")
+								| Hate speech
+								.more-info.fa.fa-question-sign(title="Provocations of hatred toward individuals or groups (not criticism)")
+								br
+								input(type="radio" name="issue" value="dangerous")
+								| Dangerous content
+								.more-info.fa.fa-question-sign(title="Content which encourages viewers to participate in dangerous activities")
+								br
+								input(type="radio" name="issue" value="copyright")
+								| Copyright
+								.more-info.fa.fa-question-sign(title="Misuse of copyrighted material")
+							p#flag-fromto #[span.cost#flag-from 1] -> #[span.cost#flag-to 3]
+							p
+								input#use-timestamp(type="checkbox")
+								| Include current timestamp
+							p#evidence-bag
+								label(for="evidence") Evidence: 
+								textarea#evidence
+							p#no-evidence Providing an explanation for your flag helps reviewers to decide if it's correct more quickly.
+							button#submit-flag Submit

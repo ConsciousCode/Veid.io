@@ -29,4 +29,5 @@ var util = (function() {
 			return s;
 		},
 		str2arr: utf8_encode
+	};
 })();

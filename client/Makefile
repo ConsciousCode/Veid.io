@@ -6,15 +6,19 @@ STYLE = styles
 STYLE_EXT = .less
 STYLE_OUT = .css
 
+JS = js
+JS_EXT = .js
+JS_OUT = .js
+
 OUT = out
 
-all: templates styles
+all: templates styles js
 	cp -r css $(OUT)
-	cp -r js $(OUT)
 	cp -r fonts $(OUT)
-	cp main.js $(OUT)/js/main.js
+	cp money.svg $(OUT)/money.svg
 
-templates: $(patsubst $(TPL)/%$(TPL_EXT),$(OUT)/%$(TPL_OUT),$(wildcard $(TPL)/*$(TPL_EXT)))
+templates: $(OUT)/index$(TPL_OUT)
+#$(patsubst $(TPL)/%$(TPL_EXT),$(OUT)/%$(TPL_OUT),$(wildcard $(TPL)/*$(TPL_EXT)))
 
 $(OUT)/%$(TPL_OUT): $(TPL)/%$(TPL_EXT)
 	jade $^ -o $(OUT)
@@ -24,6 +28,13 @@ styles: $(patsubst $(STYLE)/%$(STYLE_EXT),$(OUT)/css/%$(STYLE_OUT),$(wildcard $(
 $(OUT)/css/%$(STYLE_OUT): $(STYLE)/%$(STYLE_EXT)
 	lessc $^ $@
 
-.PHONY: clean touch
+js: $(patsubst $(JS)/%$(JS_EXT),$(OUT)/js/%$(JS_OUT),$(wildcard $(JS)/*$(JS_EXT)))
+
+$(OUT)/$(JS)/%$(JS_OUT): $(JS)/%$(JS_EXT)
+	cp $^ $@
+
+.PHONY: clean
 clean:
-	rm -r $(OUT)/*
+	rm -r $(OUT)
+	mkdir $(OUT)
+	mkdir $(OUT)/$(JS)

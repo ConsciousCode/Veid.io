@@ -1,0 +1,99 @@
+.no-select {
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	
+	cursor: pointer;
+}
+
+.rows {
+	display: flex;
+	flex-direction: column;
+}
+
+.cols {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
+.box {
+	display: inline-block;
+}
+
+.overlay {
+	position: relative;
+}
+.overlay > :first-child {
+	position: relative;
+}
+.overlay > * {
+	position: absolute;
+}
+.overlay > .left {
+	left: 0;
+}
+.overlay > .bottom {
+	bottom: 0;
+}
+
+.center {
+	text-align: center;
+}
+
+.left {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	text-align: left;
+}
+
+.right {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	text-align: right;
+}
+
+.flex-between {
+	display: flex;
+	justify-content: space-between;
+}
+
+.flex-around {
+	display: flex;
+	justify-content: space-around;
+}
+
+ul.tabs {
+	list-style-type: none;
+	display: flex;
+	margin-bottom: -1px;
+	padding: 0 12px 0 12px;
+	font-size: 14pt;
+	position: relative;
+	
+	li {
+		padding: 6px;
+	}
+	li > .content {
+		display: none;
+	}
+	
+	li.active > .content {
+		display: block;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+}
+
+.pill-group {
+	display: flex;
+	flex-direction: row;
+}
+

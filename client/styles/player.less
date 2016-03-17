@@ -1,0 +1,186 @@
+@player-bg: #2B333F;
+@player-fg: lighten(@player-bg,60%);
+
+@rounding: 2px;
+
+.player:hover {
+	.controls {
+		opacity: 1;
+	}
+}
+
+// Used for locking the controls to be visible even if the mouse isn't hovering
+.player.debug-control-lock {
+	.controls {
+		opacity: 1;
+	}
+}
+
+// Used to lock the controls while something is being configured (feels better)
+.player.control-lock {
+	.controls {
+		opacity: 1;
+	}
+}
+
+.player {
+	position: relative;
+	background: black;
+	
+	video {
+		max-width: 100%;
+		display: block;
+	}
+	
+	button {
+		background: none;
+		border: none;
+		outline: none;
+		padding: 0;
+		
+		cursor: pointer;
+		color: @player-fg;
+	}
+	
+	.controls {
+		cursor: default;
+		
+		opacity: 0;
+		transition: opacity 0.15s;
+		
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: fadeout(@player-bg,30%);
+		background: linear-gradient(fadeout(@player-bg,80%),fadeout(@player-bg,20%));
+		color: @player-fg;
+		font-size: 14pt;
+	}
+
+	.timebar {
+		display: block;
+		width: 100%;
+		height: 7px;
+		position: absolute;
+		cursor: pointer;
+		
+		/* Artificially inflates the height so hover works properly */
+		top: -5px;
+		padding: 6px 0 1px 0;
+		
+		progress {
+			width: 100%;
+			height: 3px;
+			background: darken(@player-bg,10%);
+			display: block;
+		}
+		
+		button {
+			background: none;
+			border: none;
+			padding: 0;
+			margin-left: 4px;
+		}
+		
+		.progress {
+			background: blue;
+			background: linear-gradient(to top,darken(blue,20%),blue 50%,lighten(blue,20%));
+			height: 3px;
+			width: 100%;
+		}
+		
+		.seektime {
+			background: darken(@player-bg,10%);
+			background: fadeout(darken(@player-bg,10%),30%);
+			background: linear-gradient(to top, darken(@player-bg,10%), fadeout(darken(@player-bg,10%), 30%));
+			
+			opacity: 0;
+			
+			position: absolute;
+			display: block;
+			bottom: 8px;
+			font-size: 9pt;
+			padding: 2px;
+			border-radius: @rounding @rounding 0 0;
+		}
+	}
+	
+	.timebar:hover {
+		top: -6px;
+		
+		progress {
+			height: 5px;
+		}
+		
+		.progress {
+			height: 5px;
+			margin-top: -1px;
+		}
+		
+		.seektime {
+			transition: opacity 0.25s;
+			opacity: 1;
+		}
+	}
+	
+	.timebar progress::-webkit-progress-bar {
+		background: darken(@player-bg,20%);
+		background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
+	}
+	
+	.timebar progress::-webkit-progress-value {
+		background: blue;
+		background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
+		position: relative;
+	}
+	
+	.timebar:hover progress[value]::-webkit-progress-value::after {
+		content: '';
+		animation-duration: 0.5s;
+		animation-iteration-count: 1;
+		animation-name: marker-in;
+		position: absolute;
+		border-radius: 100%;
+		right: -2px;
+		top: -2px;
+		background-color: white;
+	}
+
+	@keyframes marker-in {
+		from {
+			width: 1px;
+			height: 1px;
+		}
+		
+		to {
+			width: 9px;
+			height: 9px;
+		}
+	}
+
+	.control-buttons {
+		padding: 6px 4px 3px 2px;
+	}
+
+	.time-text {
+		font-size: 10pt;
+		margin-bottom: -3px;
+		padding-bottom: 2px;
+	}
+
+	.watched-time {
+		padding: 2px;
+		cursor: default;
+	}
+
+	.duration-time {
+		padding: 2px;
+		cursor: default;
+	}
+
+	.volume canvas {
+		display: block;
+		padding: 2px;
+	}
+}

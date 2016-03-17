@@ -1,0 +1,79 @@
+/* Default stylingn */
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+h1,h2,h3,h4,h5 {
+	margin: 0;
+}
+
+/* Rows tag */
+.-crs-rows {
+	display: flex;
+	flex-direction: column;
+}
+
+.-crs-rows > .-crs-align-left {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.-crs-rows > .-crs-align-center {
+	display: flex;
+	justify-content: center;
+}
+
+.-crs-rows > .-crs-align-right {
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* Cols tag */
+.-crs-cols {
+	display: flex;
+	flex-direction: rows;
+}
+
+.-crs-cols > .-crs-align-top {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.-crs-cols > .-crs-align-center {
+	display: flex;
+	justify-content: center;
+}
+
+.-crs-cols > .-crs-align-bottom {
+	display: flex;
+	justify-content: flex-end;
+}
+
+/* Layer tag */
+.-crs-layer {
+	position: relative;
+}
+.-crs-layer > * {
+	position: absolute;
+}
+
+.-crs-cols > .-crs-align-top {
+	top: 0;
+}
+
+.-crs-cols > .-crs-align-bottom {
+	bottom: 0;
+}
+
+.-crs-cols > .-crs-align-left {
+	left: 0;
+}
+
+.-crs-cols > .-crs-align-right {
+	right: 0;
+}
+
+.-crs-cols > .-crs-align-hcenter {
+	margin: 
+}

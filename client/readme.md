@@ -21,3 +21,12 @@ Todo
 
 * Interfacing with backend
 * Dynamic loading of content
+
+Technologies Used
+=================
+
+* [http://www-cs-students.stanford.edu/~tjw/jsbn/](JSBN)
+* [http://usenix.org/legacy/events/sec07/tech/full_papers/boyen/boyen.pdf](Halting Key Derivation Function (HKDF\))
+* [https://github.com/digitalbazaar/forge](Forge)
+
+* Node.js
