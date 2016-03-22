@@ -32,29 +32,30 @@
 .overlay > * {
 	position: absolute;
 }
-.overlay > .left {
+.overlay > .align-left {
 	left: 0;
 }
-.overlay > .bottom {
+.overlay > .align-bottom {
 	bottom: 0;
 }
 
-.center {
+.cols > .left{
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.cols > .right {
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.hcenter {
 	text-align: center;
 }
 
-.left {
+.vcenter {
 	display: flex;
-	justify-content: flex-start;
 	align-items: center;
-	text-align: left;
-}
-
-.right {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	text-align: right;
 }
 
 .flex-between {
@@ -67,29 +68,8 @@
 	justify-content: space-around;
 }
 
-ul.tabs {
-	list-style-type: none;
-	display: flex;
-	margin-bottom: -1px;
-	padding: 0 12px 0 12px;
-	font-size: 14pt;
-	position: relative;
-	
-	li {
-		padding: 6px;
-	}
-	li > .content {
-		display: none;
-	}
-	
-	li.active > .content {
-		display: block;
-		position: absolute;
-		top: 100%;
-		left: 0;
-		right: 0;
-		bottom: 0;
-	}
+.flex-fill {
+	flex-grow: 1;
 }
 
 .pill-group {
@@ -97,3 +77,46 @@ ul.tabs {
 	flex-direction: row;
 }
 
+/* Animations */
+@-webkit-keyframes spin-anim {
+	from {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+@keyframes spin-anim {
+	from {
+		-ms-transform: rotate(0deg);
+		-moz-transform: rotate(0deg);
+		-webkit-transform: rotate(0deg);
+		-o-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
+	to {
+		-ms-transform: rotate(360deg);
+		-moz-transform: rotate(360deg);
+		-webkit-transform: rotate(360deg);
+		-o-transform: rotate(360deg);
+		transform: rotate(360deg);
+	}
+}
+
+.spin-before::before {
+	display: inline-block;
+	
+	-webkit-animation: spin-anim 2s linear infinite;
+	-moz-animation: spin-anim 2s linear infinite;
+	-ms-animation: spin-anim 2s linear infinite;
+	-o-animation: spin-anim 2s linear infinite;
+	animation: spin-anim 2s linear infinite;
+}

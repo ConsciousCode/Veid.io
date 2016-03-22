@@ -16,6 +16,7 @@ all: templates styles js
 	cp -r css $(OUT)
 	cp -r fonts $(OUT)
 	cp money.svg $(OUT)/money.svg
+	cp logo.png $(OUT)/favicon.png
 
 templates: $(OUT)/index$(TPL_OUT)
 #$(patsubst $(TPL)/%$(TPL_EXT),$(OUT)/%$(TPL_OUT),$(wildcard $(TPL)/*$(TPL_EXT)))

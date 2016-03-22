@@ -30,6 +30,8 @@
 	video {
 		max-width: 100%;
 		display: block;
+		border: 0;
+		outline: 0;
 	}
 	
 	button {
@@ -73,9 +75,51 @@
 			width: 100%;
 			height: 3px;
 			background: darken(@player-bg,10%);
+			background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
 			display: block;
+			
+			outline: none;
+			border: none;
 		}
 		
+		/// Webkit
+		progress::-webkit-progress-bar {
+			background: darken(@player-bg,20%);
+			background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
+		}
+		
+		progress::-webkit-progress-value {
+			background: blue;
+			background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
+			position: relative;
+		}
+		
+		/// Mozilla
+		progress[value]::-moz-progress-bar {
+			background: blue;
+			background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
+			position: relative;
+		}
+		
+		// Firefox's indeterminate value styles as if the time is at the end
+		progress:not([value])::-moz-progress-bar {
+			background: darken(@player-bg,20%);
+			background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
+		}
+		
+		/// Standard?
+		progress::progress-bar {
+			background: darken(@player-bg,20%);
+			background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
+		}
+		
+		progress::progress-value {
+			background: blue;
+			background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
+			position: relative;
+		}
+		
+		/// Rest
 		button {
 			background: none;
 			border: none;
@@ -99,7 +143,7 @@
 			
 			position: absolute;
 			display: block;
-			bottom: 8px;
+			bottom: 9px;
 			font-size: 9pt;
 			padding: 2px;
 			border-radius: @rounding @rounding 0 0;
@@ -108,6 +152,7 @@
 	
 	.timebar:hover {
 		top: -6px;
+		height: 8px;
 		
 		progress {
 			height: 5px;
@@ -122,31 +167,44 @@
 			transition: opacity 0.25s;
 			opacity: 1;
 		}
+		
+		progress[value]::-webkit-progress-value::after {
+			content: '';
+			animation-duration: 0.5s;
+			animation-iteration-count: 1;
+			animation-name: marker-in;
+			position: absolute;
+			border-radius: 100%;
+			right: -2px;
+			top: -2px;
+			background-color: white;
+		}
+		
+		progress[value]::-moz-progress-value::after {
+			content: '';
+			animation-duration: 0.5s;
+			animation-iteration-count: 1;
+			animation-name: marker-in;
+			position: absolute;
+			border-radius: 100%;
+			right: -2px;
+			top: -2px;
+			background-color: white;
+		}
+		
+		progress[value]::progress-value::after {
+			content: '';
+			animation-duration: 0.5s;
+			animation-iteration-count: 1;
+			animation-name: marker-in;
+			position: absolute;
+			border-radius: 100%;
+			right: -2px;
+			top: -2px;
+			background-color: white;
+		}
 	}
 	
-	.timebar progress::-webkit-progress-bar {
-		background: darken(@player-bg,20%);
-		background: linear-gradient(to top,lighten(@player-bg,10%),darken(@player-bg,10%));
-	}
-	
-	.timebar progress::-webkit-progress-value {
-		background: blue;
-		background: linear-gradient(to top,darken(blue,10%),lighten(blue,10%));
-		position: relative;
-	}
-	
-	.timebar:hover progress[value]::-webkit-progress-value::after {
-		content: '';
-		animation-duration: 0.5s;
-		animation-iteration-count: 1;
-		animation-name: marker-in;
-		position: absolute;
-		border-radius: 100%;
-		right: -2px;
-		top: -2px;
-		background-color: white;
-	}
-
 	@keyframes marker-in {
 		from {
 			width: 1px;
@@ -161,6 +219,7 @@
 
 	.control-buttons {
 		padding: 6px 4px 3px 2px;
+		opacity: 0.8;
 	}
 
 	.time-text {
@@ -177,6 +236,21 @@
 	.duration-time {
 		padding: 2px;
 		cursor: default;
+	}
+	
+	.volicon {
+		display: flex;
+		align-items: center;
+		
+		span {
+			display: none;
+			align-items: center;
+			
+			&.mute {
+				font-size: 0.5em;
+				display: inline;
+			}
+		}
 	}
 
 	.volume canvas {

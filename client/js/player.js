@@ -1,4 +1,4 @@
-(function(defs, root) {
+var player = (function(root) {
 	'use strict';
 	var
 		buffer = document.createElement("canvas"),
@@ -63,12 +63,13 @@
 	/** @const **/
 	var volw = 36, volh = 18,
 		volbars = 6, volspacing = 1,
-		muted_style = 'rgba(100,100,100,0.8)',
-		unmuted_style = 'rgba(197,204,215,0.8)',
-		neg_space = 'rgba(10,10,10,0.8)';
+		muted_style = '#444',
+		unmuted_style = '#c5ccd7',
+		neg_space = '#666';
 	
 	var video, mute, timebar_container, timebar, manual_timebar, seektime,
 		volume, volume_canvas, watched_time, duration_time, play, fullscreen,
+		mutebutton, volicon,
 		player = tag('div', {class: "player"}, [
 			tag('style', {}, [
 				'@import "css/font-awesome.min.css";'+
@@ -76,7 +77,9 @@
 				'@import "css/player.css";'
 			]),
 			tag('noscript', {}, [
-				tag('h3', {}, ["This player requires JavaScript to be enabled."])
+				tag('h3', {}, [
+					"This player requires JavaScript to be enabled."
+				])
 			]),
 			video = tag('video', {
 				preload: "metadata",
@@ -91,7 +94,7 @@
 				]),
 				div('control-buttons flex-between', {}, [
 					div('flex-around', {}, [
-						div('time-text flex-around', {}, [
+						div('time-text flex-around vcenter', {}, [
 							watched_time = tag(
 								'span', {class: "watched-time"}, ["00:00"]
 							),
@@ -105,15 +108,19 @@
 						)
 					]),
 					div('flex-around', {}, [
-						mute = tag('button',
-							{class: "mute fa fa-fw fa-volume-up"}, []
-						),
+						mutebutton = tag('button', {class: "fa"}, [
+							volicon = tag('span', {
+								class: "volicon fa fa-fw fa-volume-up"
+							}, [
+								mute = tag('span', {}, [])
+							])
+						]),
 						volume = tag('button', {class: "volume"}, [
 							volume_canvas =
 								tag('canvas', {width: volw, height: volh}, [])
 						]),
 						fullscreen = tag('button', {
-							class: "fullscreen fa fa-fw fa-arrows-alt"
+							class: "fullscreen fa fa-fw fa-expand"
 						}, [])
 					])
 				])
@@ -125,8 +132,23 @@
 		manseek_oldstate = false,
 		hover = false;
 	
-	mute.addEventListener("click", function() {
-		video.muted = !video.muted;
+	player.addEventListener("mouseover", function() {
+		hover = true;
+		redraw_volume();
+	});
+	player.addEventListener("mouseout", function() {
+		if(!changing_volume) {
+			hover = false;
+		}
+	});
+	
+	mutebutton.addEventListener("click", function() {
+		if(video.muted = !video.muted) {
+			mute.className = "mute fa fa-fw fa-close";
+		}
+		else {
+			mute.className = "";
+		}
 		redraw_volume();
 	});
 	
@@ -166,14 +188,14 @@
 			ctx.fillRect(x, volh - (x + barw)/2, barw, (x + barw)/2);
 		}
 		
-		if(video.volume == 0 || video.muted){
-			mute.className = "fa fa-fw fa-volume-off";
+		if(video.volume == 0){
+			volicon.className = "volicon fa fa-fw fa-volume-off";
 		}
 		else if(video.volume < 1/2){
-			mute.className = "fa fa-fw fa-volume-down";
+			volicon.className = "volicon fa fa-fw fa-volume-down";
 		}
 		else{
-			mute.className = "fa fa-fw fa-volume-up";
+			volicon.className = "volicon fa fa-fw fa-volume-up";
 		}
 	}
 	
@@ -267,13 +289,6 @@
 			video.currentTime += lskip/60;
 		}
 	}
-	video.addEventListener("mouseover", function() {
-		hover = true;
-		redraw_volume();
-	});
-	video.addEventListener("mouseout", function() {
-		hover = false;
-	});
 	video.addEventListener("timeupdate", function() {
 		if(testing_frame) {
 			var  cur = summarize_frame(video);
@@ -433,25 +448,84 @@
 	
 	redraw_volume();
 	
-	for(var type in defs) {
-		video.appendChild(tag('source', {
-			src: defs[type],
-			type: type
-		}, []));
-	}
-	
-	var object = div("", {id: "player"}, []), shadow;
-	if(object.createShadowRoot && (shadow = object.createShadowRoot())) {
+	var shadow;
+	if(root.createShadowRoot && (shadow = root.createShadowRoot())) {
 		shadow.appendChild(player);
 	}
 	else {
-		object.appendChild(player);
+		root.appendChild(player);
 	}
 	
-	root.appendChild(object);
+	function get_mime(f) {
+		var m = /(\.[^.]*)?$/.exec(f);
+		if(m) {
+			return {
+				".mp4": "video/mp4",
+				".m4p": "video/mp4",
+				".m4v": "video/mp4",
+				".mp4": "video/mp4",
+				".mpg": "video/mpeg",
+				".mp2": "video/mpeg",
+				".mpeg": "video/mpeg",
+				".mpe": "video/mpeg",
+				".mpv": "video/mpeg",
+				".qt": "video/mov",
+				".mov": "video/mov",
+				".webm": "video/webm",
+				".ogv": "video/ogg",
+				".ogg": "video/ogg",
+				".mkv": "video/mkv",
+				".vob": "video/dvd",
+				".avi": "video/avi",
+				".wmv": "video/wmv"
+			}[m[1].toLowerCase()] || "";
+		}
+		
+		return "";
+	}
 	
-	window.vid = video;
-})({
+	return {
+		video: video,
+		load: function(vids) {
+			video.innerHTML = "";
+			if(typeof vids =="string") {
+				video.appendChild(tag('source', {
+					src: vids,
+					type: get_mime(vids)
+				}, []));
+			}
+			else {
+				for(var type in vids) {
+					video.appendChild(tag('source', {
+						src: vids[type],
+						type: type
+					}, []));
+				}
+			}
+			
+			video.load();
+		},
+		clear: function() {
+			video.innerHTML = "";
+		},
+		add: function(type, vid) {
+			if(typeof vids =="string") {
+				video.appendChild(tag('source', {
+					src: vids,
+					type: get_mime(vids)
+				}, []));
+			}
+			else {
+				video.appendChild(tag('source', {
+					src: vid,
+					type: type
+				}, []));
+			}
+		}
+	};
+})(document.getElementById("player-anchor"));
+
+player.load({
 	"video/mp4": "http://vjs.zencdn.net/v/oceans.mp4",
 	"video/webm": "http://vjs.zencdn.net/v/oceans.webm"
-}, document.body);
+});

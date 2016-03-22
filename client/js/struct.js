@@ -1,231 +1,323 @@
 //Based loosely on Python's struct module
 var Struct = (function() {
-	'use strict';
+	'use strict'; 
 	
-	//Just dump all the bytes in a lil-endian byte array, pack them later
-	function Struct_raw_data(v, t) {
-		var data = new Uint8(8);
+	/**
+	 * Abstract structure definition, used for interacting with binary data.
+	**/
+	function Struct(defs, names) {
+		var off = 0, sizes = [], offs = [], i = 0;
+		
+		if(defs[0] == "<") {
+			this.endian = false;
+			++i;
+		}
+		else if(defs[0] == ">") {
+			this.endian = true;
+			++i;
+		}
+		else {
+			this.endian = false;
+		}
+		
+		var DEF = /(?:(\d+):)?([cb?hilf])|%([\da-f])|(\*)/gi, def = [], m;
+		while(m = DEF.exec(defs)) {
+			if(m[2]) {
+				var c = m[2], r = c;
+				for(var i = 0; i < (m[1]|0) - 1; ++i) {
+					r += c;
+				}
+				def.push(r);
+			}
+			else if(m[3]) {
+				def.push(1<<parseInt(m[3], 16));
+			}
+			else {
+				def.push("*");
+				break;
+			}
+		}
+		
+		this.def = def;
+		this.names = names;
+	}
+	/**
+	 * Convert an object to a serialized array
+	**/
+	Struct.prototype._serialize = function(data) {
+		var serial = [];
+		for(var i = 0; i < this.names.length; ++i) {
+			serial.push(data[this.names[i]]);
+		}
+		
+		return serial;
+	}
+	/**
+	 * Convert a serialized array to an unstructured object
+	**/
+	Struct.prototype._deserialize = function(data) {
+		var deserial = {};
+		for(var i = 0; i < this.names.length; ++i) {
+			deserial[this.names[i]] = data[i];
+		}
+		
+		return deserial;
+	}
+	/**
+	 * Just dump all the bytes in a lil-endian byte array, pack them later
+	**/
+	Struct.prototype._raw_data = function(n, t) {
+		t = {
+			'c':1, "b":1, "B":1, "h":2, "H":2, "i":4, "I":4
+		}[t] || t;
+		
+		var data = new Uint8Array(t);
 		
 		if(typeof n == "number") {
-			//val = (-1)^sign * (1 + sum(d_i*2^-i)*2^(e - 127)
-			if(t == 'f') {
-				var sign = (n < 0), exp = 0, frac = 0, bits = 0;
-				n = Math.abs(n);
-				
-				if(n > 2) {
-					frac = ((n|0) - 1)&((1<<23) - 1);
-					bits = exp = Math.log(frac)/Math.LN2;
-					n -= n<<1;
-				}
-				
-				while(n < 2 && bits < 23) {
-					frac <<= 1;
-					n *= 2;
-					frac |= n%2;
-					--exp;
-					++bits;
-				}
-				
-				exp += 127;
-				
-				data[0] = (sign << 7) | (exp >> 1);
-				data[1] = ((exp & 1) << 7) | (frac >> 16);
-				data[2] = (frac >> 8) & 0xff;
-				data[3] = frac & 0xff;
+			for(var i = 0; i < t && n; ++i) {
+				data[i] = n%256;
+				n /= 256;
 			}
-			else if(t == 'd') {
-				var
-					sign = (n < 0),
-					exp = 0,
-					frac = 0,
-					bits = 12,
-					byte = 2;
-				n = Math.abs(n);
-				
-				while(n > 2) {
-					n /= 2;
-					++exp;
-				}
-				
-				while(n) {
-					n *= 2;
-					frac <<= 1;
-					frac |= n%2;
-					n -= n%2;
-					--exp;
-					
-					if(++bits == 12) {
-						data[byte++] = frac & 0xff;
-						frac >>= 8;
-						bits -= 8;
-					}
-				}
-				
-				exp += 1023;
-				
-				data[0] = (sign << 7) | (exp >> 4);
-				data[1] = (exp & 0xf) | frac;
+		}
+		else if(n instanceof BigInteger) {
+			var ba = n.toByteArray();
+			
+			for(var j = 0; j < ba.length && ba[j] == 0; ++j) {}
+			
+			for(var i = 0; i < t && j < ba.length; ++i) {
+				data[i] = ba[i + j];
 			}
 		}
 		else if(typeof n == "string") {
-			for(var j = size; j > n.length; --j) {
-				s += '\0';
+			for(var i = 0; i < t && i < n.length; ++i) {
+				data[i] = n.charCodeAt(i);
 			}
-			
-			s += n;
 		}
 		else if(typeof n.length != "undefined") {
-			for(var j = size; j > n.length; --j) {
-				s += '\0';
-			}
-			
-			for(var k = 0; k < j; ++k) {
-				s += String.fromCharCode(data[k]);
+			for(var i = 0; i < t && i < n.length; ++i) {
+				data[i] = n[i];
 			}
 		}
 		else {
 			throw new Error("Bad data type");
 		}
+		
+		return data;
 	}
-	
 	/**
-	 * Abstract structure definition, used for interacting with binary data.
+	 * Convert the data into a byte array to be assembled into the string type.
 	**/
-	function Struct(defs) {
-		var off = 0, sizes = [], offs = [], i = 0;
+	Struct.prototype._prepack = function(inp) {
+		inp = this._serialize(inp);
 		
-		if(defs[0] == "<") {
-			this.endian = 0;
-			++i;
-		}
-		else if(defs[0] == ">") {
-			this.endian = 1;
-			++i;
-		}
-		else {
-			this.endian = 0;
+		if(inp.length != this.def.length) {
+			throw new Error("Struct data length mismatch");
 		}
 		
-		this.def = defs.slice(i).replace(
-			/(\d+)?([cbB?hHiIlLfd])/g,
-			function($0, $1, $2) {
-				return repeat($2, +$1);
+		var out = [];
+		
+		for(var i = 0; i < inp.length && i < this.def.length; ++i) {
+			if(this.def[i] == "*") {
+				out.push(inp[i++]);
+				break;
 			}
-		).replace(/[^xcbB?hHiIlLqQfd]/g, "");
+			
+			var data = this._raw_data(inp[i], this.def[i]);
+			
+			switch(this.def[i]) {
+				case 'c':
+				case 'b':
+				case "B":
+					out.push(data[0]);
+					break;
+				case 'h':
+				case "H":
+					if(this.endian) {
+						out.push(data[1], data[0]);
+					}
+					else {
+						out.push(data[0], data[1]);
+					}
+					break;
+				case 'i':
+				case "I":
+					if(this.endian) {
+						out.push(data[3], data[2], data[1], data[0]);
+					}
+					else {
+						out.push(data[0], data[1], data[2], data[3]);
+					}
+					break;
+				default:
+					if(typeof this.def[i] == "number") {
+						//Big
+						if(this.endian) {
+							for(var j = this.def[i]; j > 0;) {
+								out.push(data[--j]);
+							}
+						}
+						else {
+							for(var j = 0; j < this.def[i]; ++j) {
+								out.push(data[j]);
+							}
+						}
+					}
+			}
+		}
+		
+		for(;i < this.def.length; ++i) {
+			out.push(0);
+		}
+		
+		return out;
 	}
-	
 	/**
 	 * Pack the data in JS's native string type.
 	**/
 	Struct.prototype.ucs2pack = function(data) {
-		if(data.length != this.def.length) {
-			throw new Error("Struct data length mismatch");
-		}
+		var pack = this._prepack(data), out = "";
 		
-		var s = "", code = 0, aligned = true;
-		
-		for(var i = 0; i < data.length; ++i) {
-			var n = data[i];
-			
-			var size = {
-				c: 1,
-				b: 1,
-				B: 1,
-				"?": 1
-				h: 2,
-				H: 2,
-				i: 4,
-				I: 4,
-				l: 8,
-				L: 8
-			}[this.def[i]];
-			
-			
-		}
-		
-		return s;
-	}
-	Struct.prototype.pack = function(data) {
-		if(data.length != this.def.length) {
-			throw new Error("Struct data length mismatch");
-		}
-		
-		var s = "";
-		
-		for(var i = 0; i < data.length; ++i) {
-			var n = data[i];
-			
-			if(typeof n == "number") {
-				var stack = [];
-				for(var j = this.sizes[i]; j > 0; --j) {
-					stack.push(n & 0xff);
-					n >>= 8;
-				}
-				
-				while(stack.length) {
-					s += String.fromCharCode(stack.pop());
-				}
+		for(var i = 0; i < pack.length; i += 2) {
+			if(this.def[i] == "*") {
+				out += pack[i];
+				break;
 			}
-			else if(typeof n == "string") {
-				s += n;
-			}
-			else if(n instanceof BigInteger) {
-				var data = n.toByteArray();
-				
-				for(var j = this.sizes[i]; j > data.length; --j) {
-					s += '\0';
-				}
-				
-				for(var j = Math.max(0, this.sizes[i] - data.length); j < data.length; ++j) {
-					s += String.fromCharCode(data[j]);
-				}
-			}
-			else if(typeof n.length != "undefined") {
-				for(var j = this.sizes[i]; j > n.length; --j) {
-					s += '\0';
-				}
-				
-				for(var k = 0; k < j; ++k) {
-					s += String.fromCharCode(data[k]);
-				}
-			}
-			else {
-				throw new Error("Bad data type");
-			}
-		}
-		
-		return s;
-	}
-	Struct.prototype.unpack = function(data) {
-		var out = [];
-		for(var i = 0; i < this.offs.length; ++i) {
-			var off = this.offs[i];
-			
-			if(this.sizes[i] > 4) {
-				var num = new BigInteger(0);
-				
-				for(var j = 0; j < this.sizes[i]; ++j) {
-					num.bitwiseTo(data.charCodeAt(off + j), op_or, num);
-					num.lShiftTo(8, num);
-				}
-			}
-			else{
-				var num = 0;
-				
-				for(var j = 0; j < this.sizes[i]; ++j) {
-					num |= data.charCodeAt(off + j);
-					num <<= 8;
-				}
-			}
-			
-			out.push(num);
-		}
-		
-		if(i < data.length) {
-			out.push(data.slice(i));
+			out += String.fromCharCode((pack[i]<<8) | pack[i + 1]);
 		}
 		
 		return out;
+	}
+	Struct.prototype.pack = function(data) {
+		var pack = this._prepack(data), out = "";
+		
+		if(this.def[this.def.length - 1] == "*") {
+			for(var i = 0; i < pack.length - 1; ++i) {
+				out += String.fromCharCode(pack[i]);
+			}
+			
+			out += pack[i];
+		}
+		else {
+			for(var i = 0; i < pack.length; ++i) {
+				out += String.fromCharCode(pack[i]);
+			}
+		}
+		
+		return out;
+	}
+	Struct.prototype._preunpack = function(data) {
+		var out = [];
+		for(var i = 0, off = 0; i < this.def.length && off < data.length; ++i, ++off) {
+			switch(this.def[i]) {
+				case 'c':
+					out.push(String.fromCharCode(data[off]));
+					break;
+				case 'b':
+					out.push((data[off] + 128)%256 - 128);
+					break;
+				case "B":
+					out.push(data[off]);
+					break;
+				case 'h':
+					var a = data[off], b = data[++off];
+					//Big
+					if(this.endian) {
+						out.push((((a<<8) | b) + 32768)%65536 - 32768);
+					}
+					else {
+						out.push((((b<<8) | a) + 32768)%65536 - 32768);
+					}
+					break;
+				case "H":
+					var a = data[off], b = data[++off];
+					//Big
+					if(this.endian) {
+						out.push((a<<8) | b);
+					}
+					else {
+						out.push((b<<8) | a);
+					}
+					break;
+				case 'i':
+					var
+						a = data[off], b = data[++off],
+						c = data[++off], d = data[++off];
+					//Big
+					if(this.endian) {
+						out.push(
+							((
+								(((((a<<8) | b)<<8) | c)<<8) | d
+							) + 32768)%65536 - 32768
+						);
+					}
+					else {
+						out.push(
+							((
+								(((((d<<8) | c)<<8) | b)<<8) | a
+							) + 32768)%65536 - 32768
+						);
+					}
+					break;
+				case "I":
+					var
+						a = data[off], b = data[++off],
+						c = data[++off], d = data[++off];
+					//Big
+					if(this.endian) {
+						out.push((((((d<<8) | c)<<8) | b)<<8) | a);
+					}
+					else {
+						out.push((((((a<<8) | b)<<8) | c)<<8) | d);
+					}
+					break;
+				case "*":
+					var rest = "";
+					for(;off < data.length; ++off) {
+						rest += String.fromCharCode(data[off]);
+					}
+					out.push(rest);
+					break;
+				default:
+					if(typeof this.def[i] == 'number') {
+						var s = [];
+						//Big
+						if(this.endian) {
+							for(var j = this.def[i] - 1; j >= 0; --j) {
+								s.push(data[off + j]);
+							}
+						}
+						else {
+							for(var j = 0; j < this.def[i]; ++j) {
+								s.push(data[off + j]);
+							}
+						}
+						
+						out.push(new BigInteger(s));
+						off += this.def[i] - 1;
+					}
+					break;
+			}
+		}
+		
+		return this._deserialize(out);
+	}
+	Struct.prototype.ucs2unpack = function(data) {
+		var codes = [];
+		for(var i = 0; i < data.length; ++i) {
+			var code = data.charCodeAt(i);
+			codes.push(code>>8);
+			codes.push(code&0xff);
+		}
+		
+		return this._preunpack(codes);
+	}
+	Struct.prototype.unpack = function(data) {
+		var codes = [];
+		for(var i = 0; i < data.length; ++i) {
+			codes.push(data.charCodeAt(i)&0xff);
+		}
+		
+		return this._preunpack(codes);
 	}
 	
 	return Struct;

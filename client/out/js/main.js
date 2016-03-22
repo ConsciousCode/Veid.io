@@ -99,6 +99,7 @@ $(document).ready(function() {
 	function activateTab(name) {
 		$(".tabs li, #omnipanel section").removeClass("active");
 		$("#"+name).addClass("active");
+		$("#"+name+"-panel").addClass("active");
 	}
 	
 	$(".tabs li").click(function(){
@@ -217,7 +218,21 @@ $(document).ready(function() {
 		add_search("#global");
 	});
 	
-	var u32 = new Struct("5"), profile = new Struct("51"),
+	var
+		u32 = new Struct(">%5", ['value']),
+		u16 = new Struct(">%4", ['value']),
+		public_profile = new Struct(">%8%5%5%5%4*", [
+			'n',
+			'nonce',
+			'hash',
+			'iv',
+			'auth',
+			'private'
+		]),
+		private_profile = new Struct(">%5*", [
+			'd',
+			'todo'
+		]),
 		login_stop, login_timer;
 	
 	$("#login-username").blur(function() {
@@ -283,83 +298,105 @@ $(document).ready(function() {
 			clearInterval(login_timer);
 		}
 		else {
-			var n = 0;
+			var n = 0, p = public_profile.unpack(user.pending);
 			login_timer = setInterval(function() {
 				n += 0.1;
-				$("#login-time").text(n.toFixed(1) + " s");
+				$("#login-time").text(n.toFixed(1));
 			}, 100);
 			
 			login_stop = halthash.extract(
-				$("#set-password").val(),
-				function(pass) {
-					var cipher = forge.cipher.createDecipher(
-							"AES-GCM", u32.pack([pass])
-						);
+				$("#login-password").val(),
+				Array.from(new Uint8Array(p.hash.toByteArray())),
+				Array.from(new Uint8Array(p.nonce.toByteArray())),
+				function(k) {
+					login_stop = null;
+					clearInterval(login_timer);
 					
-					decipher.start({iv: iv});
+					var decipher = forge.cipher.createDecipher(
+						"AES-GCM", u32.pack({value: k})
+					);
+					
+					decipher.start({
+						iv: u32.pack({value: p.iv}),
+						tag: u16.pack({value: p.auth})
+					});
 					decipher.update(forge.util.createBuffer(
-						profile.pack([rsa.d, '\x00\x00'])
+						p.private
 					));
 					decipher.finish();
 					
-					var keys = new RSAKey(), p = profile.unpack();
-					keys.setPrivateEx();
-					
-					user.name = $("login-username").val();
-					user.keys = 
-					consensus.register(
-						$("#set-username").val(),
-						cipher.output.data,
-						function() {}
+					var
+						keys = new RSAKey(),
+						pp = private_profile.unpack(decipher.output.data);
+					keys.setPrivate(
+						p.n.toString(16),
+						"10001",
+						pp.d.toString(16)
 					);
+					
+					console.log("Hello");
+					user.name = $("login-username").val();
+					user.keys = keys;
 				}
 			);
 		}
 	});
+	var register_callback, register_timer;
 	$("#register-button").click(function() {
 		$(this).toggleClass("fa-play fa-stop");
 		
-		if(login_callback) {
-			login_callback();
-			login_callback = null;
+		if(register_callback) {
+			$(this).toggleClass("fa-play fa-gear spin-before");
+			clearInterval(register_timer);
 			
-			clearInterval(timer);
-			
-			var h = halthash.H(y0, z), x = halthash.H(z, r), rsa = new RSAKey();
-			rsa.generate(2048, "10001");
-			
-			var cipher = forge.cipher.createCipher(
-					"AES-GCM", u32.pack([x])
-				),
-				iv = forge.random.getBytesSync(32);
-			
-			cipher.start({iv: iv});
-			cipher.update(forge.util.createBuffer(
-				profile.pack([rsa.d, '\x00\x00'])
-			));
-			cipher.finish();
-			
-			consensus.register(
-				$("#set-username").val(),
-				cipher.output.data,
-				function() {}
-			);
+			//Timeout so DOM can update to show the spinning gear
+			setTimeout(function() {
+				register_callback(function(h, x, k) {
+					var cipher = forge.cipher.createCipher(
+							"AES-GCM", u32.pack({value: k})
+						),
+						iv = forge.random.getBytesSync(32),
+						rsa = new RSAKey();
+					
+					rsa.generate(2048, "10001");
+					
+					cipher.start({iv: iv});
+					cipher.update(forge.util.createBuffer(
+						private_profile.pack({
+							d: rsa.d,
+							todo: '\x00\x00'
+						})
+					));
+					cipher.finish();
+					
+					consensus.register(
+						$("#register-username").val(),
+						public_profile.pack({
+							n: rsa.n,
+							nonce: x,
+							hash: h,
+							iv: iv,
+							auth: cipher.mode.tag.data,
+							private: cipher.output.data
+						}),
+						function() {
+							$("#register-button").toggleClass(
+								"fa-play fa-gear spin-before"
+							);
+						}
+					);
+				});
+				register_callback = null;
+			}, 0);
 		}
 		else {
 			var n = 0;
-			timer = setInterval(function() {
+			register_timer = setInterval(function() {
 				n += 0.1;
-				$("#login-time").text(n.toFixed(1) + " s");
+				$("#register-time").text(n.toFixed(1));
 			}, 100);
 			
-			login_callback = halthash.prepare(
-				$("#set-password").val(),
-				function(a, b, c) {
-					y0 = a;
-					z = b;
-					r = c;
-				}
-			);
+			register_callback = halthash.prepare($("#register-password").val());
 		}
 	});
 	
@@ -379,7 +416,7 @@ $(document).ready(function() {
 				activateTab("search");
 				break;
 			default:
-				if(m = /#!search\?(.+)?$/.exec(url)) {
+				if(m = /#!search:(.+)?$/.exec(url)) {
 					activateTab("search");
 					if(m[1]) {
 						if(m = /[A-Za-z\d+-]+_*/.exec(m[1])) {
@@ -395,16 +432,16 @@ $(document).ready(function() {
 						}
 					}
 				}
-				else if(m = /#!([1-9A-HJ-NP-Za-km-z]+)/.exec(url)) {
+				else if(m = /#!id:([1-9A-HJ-NP-Za-km-z]+)/i.exec(url)) {
 					consensus.unbox(m[1], function(data) {
-						var $vid = $("#player video").html("");
-						for(var mime in data) {
-							$vid.append($("<source>").attr({
-								src: ipfs.ipfs(data[mime]),
-								type: mime
-							}));
-						}
+						player.load(data);
 					});
+				}
+				else if(m = /#!\/ipfs\/([1-9A-HJ-NP-Za-km-z]+(?:\/[^\/]*))/i.exec(url)) {
+					player.load(ipfs.ipfs(m[1]));
+				}
+				else if(m = /#!\/http\/(.+)/i.exec(url)) {
+					player.load("http://"+m[1]);
 				}
 				break;
 		}
@@ -417,3 +454,22 @@ $(document).ready(function() {
 	///These should be executed last
 	process_url(location.hash);
 });
+
+function doit() {
+	var fin = document.createElement("input");
+	fin.setAttribute("type", "file");
+	fin.setAttribute("style", "margin-top:50px");
+	fin.addEventListener("change", function() {
+		player.clear();
+		for(var i = 0; i < this.files.length; ++i) {
+			(function(f) {
+				var fr = new FileReader();
+				fr.addEventListener("load", function(e) {
+					player.add(f.type, this.result);
+				});
+				fr.readAsDataURL(f);
+			})(this.files[i]);
+		}
+	});
+	document.body.appendChild(fin);
+}

@@ -51,11 +51,17 @@ var consensus=(function() {
 		});
 	}
 	
+	var gname,gpayload;
+	
 	return {
 		User: User,
 		init: function(){},
 		register: function(name, payload, ok) {
-			console.log(name,payload);
+			gname = name;
+			gpayload = payload;
+			ok();
+			return;
+			
 			var xhr = new XMLHttpRequest(),
 				params = "name="+escape(name)+"&payload="+
 					escape(btoa(util.arr2str(payload)));
@@ -70,6 +76,13 @@ var consensus=(function() {
 			xhr.send(params);
 		},
 		login: function(name, ok) {
+			if(name == gname) {
+				ok(gpayload);
+				return;
+			}
+			ok("");
+			return;
+			
 			var xhr = new XMLHttpRequest();
 			xhr.addEventListener("load", function() {
 				ok(e.responseText);

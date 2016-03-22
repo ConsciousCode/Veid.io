@@ -1,0 +1,26 @@
+<svg xmlns:dc="http://purl.org/dc/elements/1/" xmlns:cc="http://creativecommons.org/ns" xmlns:rdf="http://www.w3org/1999/2/22-rdf-syntax-ns" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100" height="100">
+	<defs>
+		<font id="font" horiz-adv-x="100">
+			<font-face font-family="Veid.io Symbols">
+				<missing-glyph>
+					<path d="M0,0h200v200h-200z"/>
+				</missing-glyph>
+				<glyph unicode="&#xe000;">
+					<g style="stroke-width:8">
+						<circle style="stroke:none" cx="50" cy="50" r="4"/>
+						<path d="m 65,96 c -23,0 -44,-27 -33,-48 11,-15 39,-8 41,11 1,4 1,8 1,12"/>
+						<path d="m 35,4 c 22,-2 46,22 37,44 -8,17 -37,16 -43,-2 -2,-5 -3,-10 -3,-16"/>
+					</g>
+				</glyph>
+				<glyph unicode="&#xe001;">
+					<circle cx="32" cy="32" r="32" id="V" style="fill:none"/>
+					<circle cx="32" cy="32" r="10"/>
+					
+					<circle cx="32" cy="-42" r="64" mask="url(#V)"/>
+					<circle cx="96" cy="69" r="64" mask="url(#V)"/>
+					<circle cx="-32" cy="69" r="64" mask="url(#V)"/>
+				</glyph>
+			</font-face>
+		</font>
+	</defs>
+</svg>

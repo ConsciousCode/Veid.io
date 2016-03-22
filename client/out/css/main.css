@@ -50,8 +50,12 @@ button.icon {
   outline: none;
   padding: 0;
 }
-#player {
-  margin: 2% auto 0 auto;
+#title {
+  text-align: center;
+  margin: 2% 0 1% 0;
+}
+#player-anchor {
+  margin: 0 auto 0 auto;
   max-width: 96%;
 }
 .cost::before {
@@ -83,7 +87,7 @@ button.icon {
   color: #2B333F;
 }
 .interact-button:hover {
-  color: #353f4e;
+  color: #404c5d;
 }
 .option-button {
   width: 2em;
@@ -96,13 +100,18 @@ button.icon {
 }
 .balance {
   font-family: Schoolbell;
+  display: flex;
+  flex-direction: row;
+  padding: 0 4px;
 }
 .balance .fraction {
+  padding-left: 4px;
   display: flex;
-  flex-direction: rows;
+  flex-direction: column;
+  font-size: 0.5em;
 }
-.balance .fraction .numerator {
-  font-size: 0.25em;
+.balance .fraction :first-child {
+  border-bottom: 1px solid #404c5d;
 }
 .likebar {
   display: flex;
@@ -115,11 +124,17 @@ button.icon {
 .likebar .tips {
   background: gold;
 }
+#info {
+  padding: 0 20px;
+}
 #interact {
   font-size: 18pt;
 }
 #interact button {
   padding: 6px;
+}
+#search {
+  flex-grow: 1;
 }
 #search input {
   flex-grow: 1;
@@ -131,10 +146,6 @@ button.icon {
   margin-left: 4px;
   cursor: help;
 }
-#omnipanel .content > section {
-  background: #e3e7ec;
-  border-top: 1px solid #404c5d;
-}
 #search-panel button {
   font-size: 11pt;
   margin: 0 4px 0 4px;
@@ -142,22 +153,40 @@ button.icon {
 #search-results {
   margin-top: 12px;
 }
-#omnipanel li.active {
+.timer::after {
+  content: " s";
+}
+#omnipanel .content > section {
+  background: #e3e7ec;
+  padding: 12px;
+  flex: 1;
+}
+#omnipanel .content section {
+  display: none;
+}
+#omnipanel .content section.active {
+  display: block;
+  border-top: 1px solid #404c5d;
+}
+#omnipanel .tabs ul {
+  list-style-type: none;
+  margin-bottom: -2px;
+  padding: 0 12px 0 12px;
+  font-size: 14pt;
+  display: flex;
+  flex-direction: row;
+}
+#omnipanel .tabs li {
+  padding: 6px;
+  z-index: 99;
+  margin-bottom: 1px;
+}
+#omnipanel .tabs li.active {
+  padding: 5px;
   background: #e3e7ec;
   border: 1px solid #404c5d;
   border-bottom: none;
   border-radius: 6px 6px 0 0;
-  padding: 5px;
-  padding-bottom: 6px;
-}
-#omnipanel::after {
-  content: "";
-  height: 12px;
-  display: block;
-}
-.thumb-container {
-  position: relative;
-  display: block;
 }
 .preview {
   border: 1px solid #404c5d;
@@ -187,11 +216,8 @@ button.icon {
 }
 .grid-preview .video-length {
   background: rgba(43, 51, 63, 0.5);
-  position: absolute;
   padding: 2px;
   color: #c5ccd7;
-  left: 0;
-  bottom: 0;
   border-top-right-radius: 4px;
   font-size: 9pt;
 }
@@ -231,11 +257,8 @@ button.icon {
 }
 .list-preview .video-length {
   background: rgba(43, 51, 63, 0.5);
-  position: absolute;
   padding: 2px;
   color: #c5ccd7;
-  left: 0;
-  bottom: 0;
   border-top-right-radius: 4px;
   font-size: 9pt;
 }

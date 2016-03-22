@@ -2,15 +2,26 @@
 var halthash = (function() {
 	'use strict';
 	
-	function H(a, b) {
-		if(typeof a == "string") {
-			a = util.str2arr(a);
-		}
-		if(typeof b == "string") {
-			b = util.str2arr(b);
+	function str2arr(x) {
+		var v = [];
+		for(var i = 0; i < x.length; ++i) {
+			v.push(x.charCodeAt(i));
 		}
 		
-		var d = forge.md.sha256.create().update(a.concat(b)).digest().data, v = [];
+		return v;
+	}
+	
+	function H(a, b) {
+		if(typeof a == "string") {
+			a = str2arr(a);
+		}
+		if(typeof b == "string") {
+			b = str2arr(b);
+		}
+		
+		var
+			d = forge.md.sha256.create().update(a.concat(b)).digest().data,
+			v = [];
 		for(var i = 0; i < d.length; ++i) {
 			v.push(d.charCodeAt(i));
 		}
@@ -41,6 +52,8 @@ var halthash = (function() {
 		var calc = setInterval(function() {
 			if(done) {
 				clearInterval(calc);
+			
+				//Check hash, nonce, XOR key
 				done(H(y0, z), r, H(z, r));
 				return;
 			}
@@ -51,9 +64,6 @@ var halthash = (function() {
 			for(var q = 0; q < Q; ++q) {
 				z = H(z, y[bigmod(z, i)]);
 			}
-			
-			//Check hash, nonce, XOR key
-			expose(y0, z, r);
 		}, 0);
 		
 		return function(func) {
